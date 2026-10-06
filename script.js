@@ -2,7 +2,7 @@
   SCRIPT · ÍNDICE
   01 Configuração e estado · 02 Navegação do funil · 03 Validação
   04 Player e progresso · 05 Classificação · 06 Payload e envio
-  07 Resultado e eventos
+  07 Resultado e revelação da LP · 08 Simulador · 09 Prova social e lightbox
 */
 
 // 01 · Configuração única da página.
@@ -75,6 +75,7 @@ function showQuestion(index) {
   focusHeading("quiz-title");
 }
 function startQuiz() {
+  hideLandingContent();
   if (player?.pauseVideo) player.pauseVideo();
   else iframe.src = iframe.src; // Interrompe o áudio quando a API externa ainda não carregou.
   showView("quiz");
@@ -87,6 +88,7 @@ document
 document.querySelector(".brand").addEventListener("click", (event) => {
   if (document.body.dataset.view === "intro") return;
   event.preventDefault();
+  hideLandingContent();
   showView("intro");
 });
 
@@ -339,6 +341,34 @@ function whatsappLink(data) {
   ].join("\n");
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
+function hideLandingContent() {
+  $("lpContent").hidden = true;
+  $("lpContent").inert = true;
+  $("lpFooter").hidden = true;
+  $("lpFooter").inert = true;
+  stopProofAutoplay?.();
+}
+function syncLandingActions(data) {
+  const contactHref = whatsappLink(data);
+  document.querySelectorAll("[data-lp-contact]").forEach((link) => {
+    link.href = contactHref;
+  });
+  document.querySelectorAll("[data-lp-self]").forEach((link) => {
+    link.href = CONFIG.checkoutUrl;
+  });
+}
+function unlockLandingContent() {
+  $("lpContent").hidden = false;
+  $("lpContent").inert = false;
+  $("lpFooter").hidden = false;
+  $("lpFooter").inert = false;
+  startProofAutoplay();
+}
+function scrollToLandingContent(event) {
+  event.preventDefault();
+  $("lp-numeros").scrollIntoView({ behavior: "smooth", block: "start" });
+  eventTrack("conteudo_lp_acessado", { lp: CONFIG.landingPageId });
+}
 function showResult(data) {
   const profile = classify(
     data.objetivo,
@@ -349,7 +379,9 @@ function showResult(data) {
   $("profileMessage").textContent = profile.text;
   $("contactLink").href = whatsappLink(data);
   $("selfLink").href = CONFIG.checkoutUrl;
+  syncLandingActions(data);
   showView("result");
+  unlockLandingContent();
   eventTrack("quiz_concluido", {
     lp: CONFIG.landingPageId,
     perfil: profile.id,
@@ -390,7 +422,207 @@ $("selfLink").addEventListener("click", () =>
     perfil: lead?.perfil,
   }),
 );
+$("exploreLink").addEventListener("click", scrollToLandingContent);
 $("editAnswers").addEventListener("click", () => {
+  hideLandingContent();
   showView("quiz");
   showQuestion(0);
 });
+
+// 08 · Simulador de carteira recorrente
+const portfolioSimulator = $("simulador-carteira");
+if (portfolioSimulator) {
+  const PORTFOLIO_PROFILES = {
+    licensee: {
+      energyRates: [0.02, 0.04],
+      energyLabel: "2%–4%",
+      energyNote: "Conforme categoria de bônus e contrato.",
+      telecomValue: 7,
+      telecomLabel: "R$ 7,00",
+      telecomNote: "Por conexão elegível e paga.",
+      insuranceRate: 0.05,
+      insuranceLabel: "5%",
+      insuranceNote: "Referência informada; confirme a regra vigente.",
+      profileNote: "Valores de geração própria usados como referência. Confirme a categoria de bônus e as regras vigentes com o especialista.",
+    },
+    referrer: {
+      energyRates: [0.01, 0.02],
+      energyLabel: "1%–2%",
+      energyNote: "Referência do fluxo de indicação.",
+      telecomValue: 3.5,
+      telecomLabel: "R$ 3,50",
+      telecomNote: "Por indicação elegível e paga.",
+      insuranceRate: 0.025,
+      insuranceLabel: "2,5%",
+      insuranceNote: "Referência informada; confirme a regra vigente.",
+      profileNote: "Valores de indicação usados como referência. Confirme as condições vigentes com o especialista antes de aderir.",
+    },
+  };
+  const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  const profileButtons = [...portfolioSimulator.querySelectorAll("[data-portfolio-profile]")];
+  const clientFields = [...portfolioSimulator.querySelectorAll("[data-portfolio-field]")];
+  const energyRate = $("portfolioEnergyRate");
+  const energyNote = $("portfolioEnergyNote");
+  const telecomRate = $("portfolioTelecomRate");
+  const telecomNote = $("portfolioTelecomNote");
+  const insuranceRate = $("portfolioInsuranceRate");
+  const insuranceNote = $("portfolioInsuranceNote");
+  const profileNote = $("portfolioProfileNote");
+  const estimate = $("portfolioEstimate");
+  const breakdown = $("portfolioBreakdown");
+  let activeProfile = "licensee";
+  let simulatorTracked = false;
+  const formatCurrency = (value) => currency.format(value);
+  const formatRange = (minimum, maximum) => minimum === maximum ? formatCurrency(minimum) : `${formatCurrency(minimum)} a ${formatCurrency(maximum)}`;
+  const getClientCount = (fieldName) => {
+    const field = portfolioSimulator.querySelector(`[data-portfolio-field="${fieldName}"]`);
+    const value = Number.parseInt(field?.value, 10);
+    return Number.isFinite(value) ? Math.min(1000, Math.max(0, value)) : 0;
+  };
+  function updatePortfolioSimulator() {
+    const profile = PORTFOLIO_PROFILES[activeProfile];
+    const energyClients = getClientCount("energy");
+    const insuranceClients = getClientCount("insurance");
+    const telecomClients = getClientCount("telecom");
+    const energyMinimum = energyClients * 500 * profile.energyRates[0];
+    const energyMaximum = energyClients * 500 * profile.energyRates[1];
+    const insuranceTotal = insuranceClients * 300 * profile.insuranceRate;
+    const telecomTotal = telecomClients * profile.telecomValue;
+    energyRate.textContent = profile.energyLabel;
+    energyNote.textContent = profile.energyNote;
+    telecomRate.textContent = profile.telecomLabel;
+    telecomNote.textContent = profile.telecomNote;
+    insuranceRate.textContent = profile.insuranceLabel;
+    insuranceNote.textContent = profile.insuranceNote;
+    profileNote.textContent = profile.profileNote;
+    estimate.textContent = formatRange(energyMinimum + insuranceTotal + telecomTotal, energyMaximum + insuranceTotal + telecomTotal);
+    breakdown.textContent = `Energia: ${formatRange(energyMinimum, energyMaximum)} · Seguros: ${formatCurrency(insuranceTotal)} · Telecom: ${formatCurrency(telecomTotal)}`;
+  }
+  profileButtons.forEach((button) => button.addEventListener("click", () => {
+    activeProfile = button.dataset.portfolioProfile;
+    profileButtons.forEach((item) => {
+      const active = item === button;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    updatePortfolioSimulator();
+    eventTrack("simulador_carteira_perfil", { simulator_profile: activeProfile });
+  }));
+  clientFields.forEach((field) => {
+    field.addEventListener("input", () => {
+      updatePortfolioSimulator();
+      if (!simulatorTracked) {
+        simulatorTracked = true;
+        eventTrack("simulador_carteira_iniciado", { simulator_profile: activeProfile });
+      }
+    });
+    field.addEventListener("blur", () => {
+      field.value = String(getClientCount(field.dataset.portfolioField));
+      updatePortfolioSimulator();
+    });
+  });
+  $("portfolioSimulatorCta").addEventListener("click", () => eventTrack("simulador_carteira_cta", { simulator_profile: activeProfile }));
+  updatePortfolioSimulator();
+}
+
+// 09 · Prova social, filtros e lightbox
+const proofSlider = $("proofSlider");
+const proofSlides = [...document.querySelectorAll(".proof-slide")];
+const proofFilterButtons = [...document.querySelectorAll(".proof-filter")];
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let activeProofFilter = "Todos";
+let visibleProofSlides = [...proofSlides];
+let proofIndex = 0;
+let proofTimer = null;
+let proofProgressTimer = null;
+let proofProgress = 0;
+const proofIntervalMs = 5200;
+const pad2 = (value) => String(value).padStart(2, "0");
+function updateProof(index, resetProgress = true) {
+  if (!visibleProofSlides.length) return;
+  proofIndex = (index + visibleProofSlides.length) % visibleProofSlides.length;
+  proofSlides.forEach((slide) => slide.classList.remove("is-active"));
+  const active = visibleProofSlides[proofIndex];
+  active.classList.add("is-active");
+  $("proofCategory").textContent = active.dataset.category || "Resultado";
+  $("proofTitle").textContent = active.dataset.title || "Destaque";
+  $("proofLocation").textContent = active.dataset.location || "";
+  $("proofMetric").textContent = active.dataset.metric || "Resultado em destaque";
+  $("proofCurrent").textContent = pad2(proofIndex + 1);
+  $("proofTotal").textContent = pad2(visibleProofSlides.length);
+  if (resetProgress) {
+    proofProgress = 0;
+    $("proofProgressBar").style.width = "0%";
+  }
+}
+function stopProofAutoplay() {
+  if (proofTimer) window.clearInterval(proofTimer);
+  if (proofProgressTimer) window.clearInterval(proofProgressTimer);
+  proofTimer = null;
+  proofProgressTimer = null;
+}
+function startProofAutoplay() {
+  if (prefersReducedMotion || visibleProofSlides.length < 2 || $("lpContent").hidden) return;
+  stopProofAutoplay();
+  proofProgress = 0;
+  proofTimer = window.setInterval(() => updateProof(proofIndex + 1), proofIntervalMs);
+  proofProgressTimer = window.setInterval(() => {
+    proofProgress += 100 / (proofIntervalMs / 100);
+    if (proofProgress >= 100) proofProgress = 0;
+    $("proofProgressBar").style.width = `${proofProgress}%`;
+  }, 100);
+}
+function rebuildVisibleProofs() {
+  visibleProofSlides = proofSlides.filter((slide) => activeProofFilter === "Todos" || slide.dataset.category === activeProofFilter);
+  proofSlides.forEach((slide) => slide.classList.toggle("is-filtered-out", !visibleProofSlides.includes(slide)));
+  proofIndex = 0;
+  updateProof(0);
+  startProofAutoplay();
+}
+proofFilterButtons.forEach((button) => button.addEventListener("click", () => {
+  activeProofFilter = button.dataset.filter || "Todos";
+  proofFilterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+  rebuildVisibleProofs();
+}));
+$("proofPrev").addEventListener("click", () => { updateProof(proofIndex - 1); startProofAutoplay(); });
+$("proofNext").addEventListener("click", () => { updateProof(proofIndex + 1); startProofAutoplay(); });
+proofSlider.addEventListener("mouseenter", stopProofAutoplay);
+proofSlider.addEventListener("mouseleave", startProofAutoplay);
+proofSlider.addEventListener("focusin", stopProofAutoplay);
+proofSlider.addEventListener("focusout", startProofAutoplay);
+const lightbox = $("lightbox");
+const lightboxImage = $("lightboxImage");
+let lastLightboxTrigger = null;
+function openLightbox(img, trigger) {
+  lastLightboxTrigger = trigger;
+  lightboxImage.src = img.src;
+  lightboxImage.alt = img.alt;
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("lightbox-open");
+  $("lightboxClose").focus();
+}
+function closeLightbox() {
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lightbox-open");
+  lastLightboxTrigger?.focus();
+}
+document.querySelectorAll(".proof-image-button").forEach((button) => button.addEventListener("click", () => {
+  const img = button.querySelector("img");
+  if (img) {
+    eventTrack("prova_social_ampliada", { proof_category: button.closest(".proof-slide")?.dataset.category || "" });
+    openLightbox(img, button);
+  }
+}));
+$("proofOpenCase").addEventListener("click", () => visibleProofSlides[proofIndex]?.querySelector(".proof-image-button")?.click());
+$("lightboxClose").addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+  if (!lightbox.classList.contains("is-open") && document.activeElement?.closest?.("#proofSlider")) {
+    if (event.key === "ArrowRight") { updateProof(proofIndex + 1); startProofAutoplay(); }
+    if (event.key === "ArrowLeft") { updateProof(proofIndex - 1); startProofAutoplay(); }
+  }
+});
+updateProof(0);

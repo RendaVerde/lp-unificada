@@ -117,6 +117,8 @@ function validateJourney() {
     "apresentacao", "analise", "resultado", "leadForm", "presentationVideo",
     "lp-numeros", "lp-modelo", "lp-como-funciona", "lp-institucional",
     "lp-ecossistema", "lp-estrutura", "lp-perguntas", "lp-contato",
+    "exploreLink", "simulador-carteira", "portfolioEstimate",
+    "prova-social", "proofFilters", "proofSlider", "lightbox",
   ];
   requiredIds.forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`Bloco obrigatório ausente: ${id}`);
@@ -127,6 +129,20 @@ function validateJourney() {
   if (!script.includes('sheetSiteId: "rendaverde-igreen"')) errors.push("site_id original não foi preservado.");
   if (!script.includes('landingPageId: "lp-unificada"')) errors.push("landing_page_id novo não foi aplicado.");
   if (!script.includes('["localhost", "127.0.0.1"].includes(location.hostname)')) errors.push("Bloqueio local de leads ausente.");
+  if (!/<div class="lp-content" id="lpContent" hidden inert>/.test(html)) errors.push("LP deve iniciar com hidden e inert.");
+  if (!/<footer class="site-footer" id="lpFooter" hidden inert>/.test(html)) errors.push("Rodapé deve iniciar oculto.");
+  if (!script.includes('$("exploreLink").addEventListener("click", scrollToLandingContent)')) errors.push("Navegação da opção de explorar a LP ausente.");
+  if (!/function showResult[\s\S]*?showView\("result"\);\s*unlockLandingContent\(\)/.test(script)) errors.push("LP deve ser liberada automaticamente ao mostrar o resultado.");
+  const resultOptions = html.match(/<div class="result-options"[\s\S]*?<\/div>/)?.[0] || "";
+  if ((resultOptions.match(/class="option(?:\s[^"]*)?"/g) || []).length !== 3) errors.push("O resultado deve apresentar três opções equivalentes.");
+  if (!/id="contactLink"[\s\S]*id="exploreLink"[\s\S]*id="selfLink"/.test(resultOptions)) errors.push("A opção de explorar deve ocupar a posição central fixa.");
+  if (script.includes("shuffleResultOptions") || script.includes(".sort(() => Math.random()")) errors.push("As opções do resultado não podem ser embaralhadas.");
+  const landingMarkup = html.slice(html.indexOf('<div class="lp-content"'), html.indexOf("</main>"));
+  if (landingMarkup.includes("data-start-quiz")) errors.push("CTA da LP não pode reiniciar o funil.");
+  if ((landingMarkup.match(/data-lp-contact/g) || []).length < 2 || (landingMarkup.match(/data-lp-self/g) || []).length < 2) errors.push("CTAs da LP devem oferecer WhatsApp e auto conexão.");
+  ["--bg: #070909", "--bg2: #0d1010", "--panel: #111515", "--panel2: #0b0f0d", "--green: #00e110", "--green2: #00f572"].forEach((token) => {
+    if (!css.includes(token)) errors.push(`Token original ausente: ${token}`);
+  });
   ["tipo", "lead_id", "landing_page_id", "nome", "email", "whatsapp", "objetivo", "experiencia_vendas", "disponibilidade", "perfil", "score", "rota_resultado", "momento"].forEach((field) => {
     if (!script.includes(`${field}:`)) errors.push(`Campo do payload ausente: ${field}`);
   });
@@ -136,8 +152,13 @@ function validateContentPolicy() {
   const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
   const withoutInlineScripts = withoutComments.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
   const forbidden = /R\$|%|gratuit|grátis|à vista|12x|investimento|bônus|royalt|comiss/i;
-  const htmlMatch = withoutInlineScripts.match(forbidden);
-  const scriptMatch = script.match(forbidden);
+  const outsideAllowedHtml = ["lp-numeros", "simulador-carteira", "prova-social"].reduce(
+    (source, id) => source.replace(new RegExp(`<section[^>]*id=["']${id}["'][\\s\\S]*?<\\/section>`, "i"), ""),
+    withoutInlineScripts,
+  );
+  const outsideAllowedScript = script.split("// 08 · Simulador de carteira recorrente")[0];
+  const htmlMatch = outsideAllowedHtml.match(forbidden);
+  const scriptMatch = outsideAllowedScript.match(forbidden);
   if (htmlMatch) errors.push(`Termo não aprovado no HTML público: ${htmlMatch[0]}`);
   if (scriptMatch) errors.push(`Termo não aprovado no JavaScript: ${scriptMatch[0]}`);
 }
