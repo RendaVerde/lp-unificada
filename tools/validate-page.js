@@ -1,0 +1,165 @@
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+
+const root = path.resolve(__dirname, "..");
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const css = fs.readFileSync(path.join(root, "style.css"), "utf8");
+const script = fs.readFileSync(path.join(root, "script.js"), "utf8");
+const errors = [];
+
+const unique = (values) => [...new Set(values)];
+const matches = (source, pattern, group = 1) =>
+  [...source.matchAll(pattern)].map((match) => match[group]);
+
+function validateReferences() {
+  const references = matches(
+    html,
+    /\b(?:href|poster|src)=["'](\.\/[^"']+)["']/g,
+  ).map((reference) => decodeURIComponent(reference.slice(2).split(/[?#]/, 1)[0]));
+  const missing = unique(references).filter(
+    (reference) => !fs.existsSync(path.join(root, reference)),
+  );
+  if (missing.length) errors.push(`Arquivos locais ausentes: ${missing.join(", ")}`);
+  return unique(references).length;
+}
+
+function validateIds() {
+  const ids = matches(html, /\bid=["']([^"']+)["']/g);
+  const duplicates = unique(ids.filter((id, index) => ids.indexOf(id) !== index));
+  if (duplicates.length) errors.push(`IDs duplicados: ${duplicates.join(", ")}`);
+  const labels = matches(html, /<label\b[^>]*\bfor=["']([^"']+)["']/g);
+  const missingLabels = unique(labels).filter((target) => !ids.includes(target));
+  if (missingLabels.length) errors.push(`Labels sem campo: ${missingLabels.join(", ")}`);
+  const scriptIds = matches(script, /\$\(["']([^"']+)["']\)/g);
+  const missingScriptIds = unique(scriptIds).filter((id) => !ids.includes(id));
+  if (missingScriptIds.length) errors.push(`IDs do JavaScript ausentes: ${missingScriptIds.join(", ")}`);
+  return ids.length;
+}
+
+function validateHtml() {
+  const voidElements = new Set([
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "param", "source", "track", "wbr",
+  ]);
+  const stack = [];
+  const tokens = html.match(/<!--[\s\S]*?-->|<![^>]*>|<\/?[a-z][^>]*>/gi) || [];
+  for (const token of tokens) {
+    if (token.startsWith("<!--") || token.startsWith("<!")) continue;
+    const tag = token.match(/^<\/?\s*([a-z][\w:-]*)/i)?.[1].toLowerCase();
+    if (!tag) continue;
+    if (/^<\//.test(token)) {
+      const expected = stack.pop();
+      if (expected !== tag) errors.push(`Fechamento inesperado: ${tag}; esperado: ${expected || "nenhum"}.`);
+    } else if (!/\/>$/.test(token) && !voidElements.has(tag)) {
+      stack.push(tag);
+    }
+  }
+  if (stack.length) errors.push(`Tags sem fechamento: ${stack.join(", ")}`);
+  return tokens.length;
+}
+
+function validateCss() {
+  let depth = 0;
+  let state = "code";
+  let quote = "";
+  for (let index = 0; index < css.length; index += 1) {
+    const character = css[index];
+    const next = css[index + 1];
+    if (state === "comment") {
+      if (character === "*" && next === "/") { state = "code"; index += 1; }
+      continue;
+    }
+    if (state === "string") {
+      if (character === "\\") index += 1;
+      else if (character === quote) state = "code";
+      continue;
+    }
+    if (character === "/" && next === "*") { state = "comment"; index += 1; }
+    else if (character === '"' || character === "'") { state = "string"; quote = character; }
+    else if (character === "{") depth += 1;
+    else if (character === "}") depth -= 1;
+    if (depth < 0) break;
+  }
+  if (state !== "code") errors.push("Comentário ou string CSS sem fechamento.");
+  if (depth !== 0) errors.push(`Blocos CSS desequilibrados: ${depth}.`);
+}
+
+function validateScripts() {
+  try { new vm.Script(script, { filename: "script.js" }); }
+  catch (error) { errors.push(`JavaScript inválido: ${error.message}`); }
+  const inlineScripts = matches(
+    html,
+    /<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi,
+  ).filter((source) => source.trim());
+  inlineScripts.forEach((source, index) => {
+    try { new vm.Script(source, { filename: `index.html:inline-${index + 1}` }); }
+    catch (error) { errors.push(`Script inline inválido: ${error.message}`); }
+  });
+  return inlineScripts.length;
+}
+
+function validateIntegrations() {
+  const requirements = [
+    ["Google Analytics", "G-3RQFWLHZKB"],
+    ["Google Ads", "AW-18467789810"],
+    ["Meta Pixel", "2117273098918269"],
+    ["Microsoft Clarity", "yd7ainpuvt"],
+  ];
+  requirements.forEach(([name, marker]) => {
+    if (!html.includes(marker)) errors.push(`${name} ausente.`);
+  });
+  if (!html.includes('data-clarity-mask="true"')) errors.push("Proteção do formulário no Clarity ausente.");
+}
+
+function validateJourney() {
+  const requiredIds = [
+    "apresentacao", "analise", "resultado", "leadForm", "presentationVideo",
+    "lp-numeros", "lp-modelo", "lp-como-funciona", "lp-institucional",
+    "lp-ecossistema", "lp-estrutura", "lp-perguntas", "lp-contato",
+  ];
+  requiredIds.forEach((id) => {
+    if (!html.includes(`id="${id}"`)) errors.push(`Bloco obrigatório ausente: ${id}`);
+  });
+  const mediaCount = matches(html, /<(?:video|iframe)\b/gi, 0).length;
+  if (mediaCount !== 1) errors.push(`A página deve ter um único player; encontrados: ${mediaCount}.`);
+  if ((script.match(/\bconst CONFIG\b/g) || []).length !== 1) errors.push("CONFIG deve existir uma única vez.");
+  if (!script.includes('sheetSiteId: "rendaverde-igreen"')) errors.push("site_id original não foi preservado.");
+  if (!script.includes('landingPageId: "lp-unificada"')) errors.push("landing_page_id novo não foi aplicado.");
+  if (!script.includes('["localhost", "127.0.0.1"].includes(location.hostname)')) errors.push("Bloqueio local de leads ausente.");
+  ["tipo", "lead_id", "landing_page_id", "nome", "email", "whatsapp", "objetivo", "experiencia_vendas", "disponibilidade", "perfil", "score", "rota_resultado", "momento"].forEach((field) => {
+    if (!script.includes(`${field}:`)) errors.push(`Campo do payload ausente: ${field}`);
+  });
+}
+
+function validateContentPolicy() {
+  const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+  const withoutInlineScripts = withoutComments.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const forbidden = /R\$|%|gratuit|grátis|à vista|12x|investimento|bônus|royalt|comiss/i;
+  const htmlMatch = withoutInlineScripts.match(forbidden);
+  const scriptMatch = script.match(forbidden);
+  if (htmlMatch) errors.push(`Termo não aprovado no HTML público: ${htmlMatch[0]}`);
+  if (scriptMatch) errors.push(`Termo não aprovado no JavaScript: ${scriptMatch[0]}`);
+}
+
+const references = validateReferences();
+const ids = validateIds();
+const elements = validateHtml();
+validateCss();
+const inlineScripts = validateScripts();
+validateIntegrations();
+validateJourney();
+validateContentPolicy();
+
+if (errors.length) {
+  console.error("Validação reprovada:\n");
+  errors.forEach((error) => console.error(`- ${error}`));
+  process.exit(1);
+}
+
+console.log("Validação concluída sem erros.");
+console.log(`- ${elements} elementos HTML analisados`);
+console.log(`- ${ids} IDs únicos verificados`);
+console.log(`- ${references} arquivos locais encontrados`);
+console.log(`- ${inlineScripts} scripts inline verificados`);
+console.log("- Funil, payload, integrações e política de conteúdo verificados");

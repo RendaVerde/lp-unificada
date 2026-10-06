@@ -1,0 +1,834 @@
+<!doctype html>
+<!--
+  LP UNIFICADA IGREEN
+  01 Integrações · 02 Cabeçalho · 03 Apresentação · 04 Triagem · 05 Resultado
+  06 Indicadores · 07 Modelo · 08 Como funciona · 09 Institucional
+  10 Ecossistema · 11 Estrutura · 12 Perguntas · 13 Chamada final e rodapé
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#070909" />
+    <meta
+      name="description"
+      content="Conheça o licenciamento iGreen e descubra seu próximo passo em uma experiência rápida."
+    />
+    <title>iGreen Energy | Descubra seu próximo passo</title>
+    <link rel="icon" href="./img/favicon.ico" />
+    <link rel="stylesheet" href="./style.css" />
+    <!-- 01 · Google Analytics, Google Ads, Meta Pixel e Microsoft Clarity -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-3RQFWLHZKB"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-3RQFWLHZKB");
+      gtag("config", "AW-18467789810");
+    </script>
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = true;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = true;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js",
+      );
+      fbq("init", "2117273098918269");
+      fbq("track", "PageView");
+    </script>
+    <script>
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "yd7ainpuvt");
+    </script>
+  </head>
+  <body data-view="intro">
+    <noscript>
+      <img
+        class="tracking-pixel"
+        height="1"
+        width="1"
+        src="https://www.facebook.com/tr?id=2117273098918269&amp;ev=PageView&amp;noscript=1"
+        alt=""
+      />
+    </noscript>
+    <!-- 02 · Cabeçalho -->
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="iGreen Energy — início"
+        ><img src="./img/igreen-logo.png" alt="iGreen Energy"
+      /></a>
+      <div class="header-actions">
+        <span class="header-note"
+          >Uma conversa pode mudar seu próximo passo.</span
+        >
+        <button
+          class="button button-primary header-cta"
+          id="headerStartQuiz"
+          type="button"
+          data-start-quiz
+        >
+          DESCOBRIR MEU PERFIL <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="inicio">
+      <!-- 03 · Apresentação em vídeo -->
+      <section class="intro" id="apresentacao" aria-labelledby="intro-title">
+        <div class="intro-glow" aria-hidden="true"></div>
+        <div class="container">
+          <div class="intro-copy">
+            <span class="eyebrow"
+              ><span class="live-dot"></span> UMA NOVA FORMA DE COMEÇAR</span
+            >
+            <h1 id="intro-title">
+              Seu próximo passo pode começar <em>agora.</em>
+            </h1>
+          </div>
+          <div class="video-wrap" aria-label="Apresentação iGreen">
+            <div class="video-topline">
+              <span
+                ><span class="play-mark" aria-hidden="true">▶</span>
+                APRESENTAÇÃO IGREEN</span
+              ><span class="video-topline-right">ASSISTA COM SOM</span>
+            </div>
+            <div class="video-frame">
+              <iframe
+                id="presentationVideo"
+                title="Vídeo institucional iGreen 2026"
+                src="https://www.youtube.com/embed/qdeblguZdGc?enablejsapi=1&playsinline=1&rel=0"
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                "
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+              ></iframe>
+              <button
+                class="video-cover"
+                id="videoCover"
+                type="button"
+                aria-label="Reproduzir apresentação iGreen"
+              >
+                <img src="./img/igreen-logo.png" alt="" /><span
+                  class="video-cover-kicker"
+                  >UMA APRESENTAÇÃO PARA O SEU PRÓXIMO PASSO</span
+                ><span class="video-cover-play" aria-hidden="true">▶</span
+                ><strong>Assista e descubra o que vem depois.</strong>
+              </button>
+            </div>
+            <div class="video-footer">
+              <div class="video-progress"><span id="watchProgress"></span></div>
+              <span id="watchStatus"
+                >A apresentação é o começo da sua jornada.</span
+              ><a
+                id="videoFallback"
+                href="https://www.youtube.com/watch?v=qdeblguZdGc"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Abrir vídeo no YouTube ↗</a
+              >
+            </div>
+          </div>
+          <div class="intro-next">
+            <span>Assista à apresentação e descubra o seu próximo passo.</span
+            ><button
+              class="button button-primary"
+              type="button"
+              id="startQuiz"
+              data-start-quiz
+            >
+              DESCOBRIR MEU PERFIL <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 · Quiz de triagem -->
+      <section
+        class="quiz-section"
+        id="analise"
+        aria-labelledby="quiz-title"
+        hidden
+      >
+        <div class="container narrow quiz-stage">
+          <span class="eyebrow">DESCUBRA SEU CAMINHO</span>
+          <h2 id="quiz-title" tabindex="-1">Como podemos te chamar?</h2>
+          <p class="quiz-subtitle" id="quizSubtitle">
+            Vamos começar por quem está aqui.
+          </p>
+          <form id="leadForm" novalidate data-clarity-mask="true">
+            <fieldset
+              class="quiz-step"
+              data-question="name"
+              data-title="Como podemos te chamar?"
+              data-subtitle="Vamos começar por quem está aqui."
+            >
+              <legend class="sr-only">Seu nome</legend>
+              <label class="field-label" for="name"
+                >Seu nome <span>*</span
+                ><input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  maxlength="80"
+                  placeholder="Digite seu nome"
+                  required
+              /></label>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
+              data-question="email"
+              data-title="E qual é o seu melhor e-mail?"
+              data-subtitle="Para manter essa conversa aberta."
+              hidden
+            >
+              <legend class="sr-only">Seu e-mail</legend>
+              <label class="field-label" for="email"
+                >Seu e-mail <span>*</span
+                ><input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="120"
+                  placeholder="seu@email.com"
+                  required
+              /></label>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
+              data-question="phone"
+              data-title="Qual WhatsApp podemos usar?"
+              data-subtitle="Para que nosso time encontre você se quiser conversar."
+              hidden
+            >
+              <legend class="sr-only">Seu WhatsApp</legend>
+              <label class="field-label" for="phone"
+                >Seu WhatsApp <span>*</span
+                ><input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  maxlength="16"
+                  placeholder="(00) 00000-0000"
+                  required
+              /></label>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
+              data-question="goal"
+              data-title="O que você busca agora?"
+              data-subtitle="A resposta pode revelar um novo caminho."
+              hidden
+            >
+              <legend class="sr-only">Seu objetivo</legend>
+              <div
+                class="choices"
+                role="radiogroup"
+                aria-label="O que você busca agora?"
+              >
+                <label
+                  ><input
+                    type="radio"
+                    name="goal"
+                    value="renda_extra"
+                    required
+                  /><span>Uma renda extra</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="goal"
+                    value="renda_principal"
+                  /><span>Uma renda principal</span></label
+                >
+                <label
+                  ><input type="radio" name="goal" value="empreender" /><span
+                    >Empreender e crescer</span
+                  ></label
+                >
+              </div>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
+              data-question="experience"
+              data-title="Você já trabalhou com vendas?"
+              data-subtitle="Começar do zero também é um caminho."
+              hidden
+            >
+              <legend class="sr-only">Experiência em vendas</legend>
+              <div
+                class="choices"
+                role="radiogroup"
+                aria-label="Você já trabalhou com vendas?"
+              >
+                <label
+                  ><input
+                    type="radio"
+                    name="experience"
+                    value="sim"
+                    required
+                  /><span>Sim</span></label
+                >
+                <label
+                  ><input type="radio" name="experience" value="nao" /><span
+                    >Ainda não</span
+                  ></label
+                >
+              </div>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
+              data-question="availability"
+              data-title="Quanto tempo pode dedicar?"
+              data-subtitle="O próximo passo precisa caber no seu momento."
+              hidden
+            >
+              <legend class="sr-only">Sua disponibilidade</legend>
+              <div
+                class="choices"
+                role="radiogroup"
+                aria-label="Quanto tempo pode dedicar?"
+              >
+                <label
+                  ><input
+                    type="radio"
+                    name="availability"
+                    value="poucas_horas"
+                    required
+                  /><span>Poucas horas</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="availability"
+                    value="meio_periodo"
+                  /><span>Meio período</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="availability"
+                    value="integral"
+                  /><span>Tempo integral</span></label
+                >
+              </div>
+              <label class="consent"
+                ><input id="consent" type="checkbox" required /><span
+                  >Concordo em compartilhar meus dados e respostas para receber
+                  contato sobre a oportunidade iGreen.</span
+                ></label
+              >
+            </fieldset>
+            <p class="form-error" id="formError" role="alert" hidden></p>
+            <div class="quiz-actions">
+              <button
+                class="button button-quiet"
+                type="button"
+                id="backQuestion"
+              >
+                VOLTAR</button
+              ><button
+                class="button button-primary"
+                type="button"
+                id="nextQuestion"
+              >
+                CONTINUAR <span aria-hidden="true">→</span></button
+              ><button
+                class="button button-primary"
+                type="submit"
+                id="submitLead"
+                hidden
+              >
+                VER MEU PRÓXIMO PASSO <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </form>
+          <p class="quiz-privacy">
+            Suas respostas servem para orientar a conversa. Nenhum resultado de
+            renda é garantido.
+          </p>
+        </div>
+      </section>
+
+      <!-- 05 · Resultado da triagem -->
+      <section
+        class="result-section"
+        id="resultado"
+        aria-labelledby="result-title"
+        hidden
+      >
+        <div class="container narrow result-container">
+          <span class="result-icon" aria-hidden="true">↗</span
+          ><span class="eyebrow">SEU PRÓXIMO PASSO</span>
+          <h2 id="result-title" tabindex="-1">
+            <span id="firstName"></span>, sua jornada pode começar aqui.
+          </h2>
+          <p id="profileMessage"></p>
+          <p class="result-prompt">Como prefere seguir?</p>
+          <div class="result-options">
+            <a
+              class="option"
+              id="contactLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span class="option-symbol" aria-hidden="true">◉</span
+              ><strong>Falar com um atendente</strong
+              ><small
+                >Tire dúvidas e entenda os próximos passos com uma
+                pessoa.</small
+              ><span class="option-arrow" aria-hidden="true">↗</span></a
+            >
+            <a
+              class="option"
+              id="selfLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span class="option-symbol" aria-hidden="true">↗</span
+              ><strong>Fazer minha auto conexão</strong
+              ><small
+                >Abra a ativação e confira as condições antes de
+                concluir.</small
+              ><span class="option-arrow" aria-hidden="true">↗</span></a
+            >
+          </div>
+          <button class="text-button" type="button" id="editAnswers">
+            Editar respostas
+          </button>
+        </div>
+      </section>
+
+      <div class="lp-content">
+        <!-- 06 · Indicadores institucionais -->
+        <section
+          class="lp-section lp-numbers"
+          id="lp-numeros"
+          aria-labelledby="lp-numeros-title"
+        >
+          <div class="container">
+            <div class="lp-section-head">
+              <span class="eyebrow">ESTRUTURA EM MOVIMENTO</span>
+              <h2 id="lp-numeros-title">
+                Uma marca presente em mercados essenciais.
+              </h2>
+              <p>
+                Indicadores institucionais publicados pela iGreen e consultados
+                em agosto de 2026.
+              </p>
+            </div>
+            <div class="lp-number-grid">
+              <article>
+                <strong>800 mil+</strong><span>clientes conectados</span>
+              </article>
+              <article>
+                <strong>21+</strong><span>estados atendidos</span>
+              </article>
+              <article>
+                <strong>1.000+</strong><span>usinas solares</span>
+              </article>
+              <article>
+                <strong>30+</strong><span>distribuidoras integradas</span>
+              </article>
+              <article>
+                <strong>3.000 m²</strong><span>de sede própria</span>
+              </article>
+              <article><strong>500+</strong><span>colaboradores</span></article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 07 · Modelo de operação -->
+        <section
+          class="lp-section lp-dark"
+          id="lp-modelo"
+          aria-labelledby="lp-modelo-title"
+        >
+          <div class="container">
+            <div class="lp-section-head">
+              <span class="eyebrow">COMO O LICENCIADO ATUA</span>
+              <h2 id="lp-modelo-title">
+                Você não precisa abrir uma loja. Precisa construir uma operação.
+              </h2>
+              <p>
+                A proposta reúne serviços que pessoas e empresas já utilizam,
+                com ferramentas digitais para apresentar soluções, acompanhar
+                clientes e desenvolver mercado.
+              </p>
+            </div>
+            <div class="lp-card-grid">
+              <article>
+                <span>01 · DIGITAL</span>
+                <h3>Sem estoque físico</h3>
+                <p>
+                  Atuação comercial apoiada por plataforma, aplicativos,
+                  materiais e canais digitais.
+                </p>
+              </article>
+              <article>
+                <span>02 · PORTFÓLIO</span>
+                <h3>Mais de uma solução</h3>
+                <p>
+                  Diferentes conexões podem ser apresentadas conforme a
+                  necessidade de cada cliente.
+                </p>
+              </article>
+              <article>
+                <span>03 · DESENVOLVIMENTO</span>
+                <h3>Carteira e expansão</h3>
+                <p>
+                  O crescimento vem de relacionamento, clientes ativos e
+                  trabalho comercial, sem promessa de ganho automático.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 08 · Etapas de atuação -->
+        <section
+          class="lp-section"
+          id="lp-como-funciona"
+          aria-labelledby="lp-como-title"
+        >
+          <div class="container">
+            <div class="lp-section-head">
+              <span class="eyebrow">DA ENTRADA À ATUAÇÃO</span>
+              <h2 id="lp-como-title">
+                Uma jornada para aprender, conectar e evoluir.
+              </h2>
+              <p>
+                O licenciado recebe orientação para desenvolver competência
+                comercial ao longo do tempo.
+              </p>
+            </div>
+            <ol class="lp-steps">
+              <li>
+                <span>01</span>
+                <div>
+                  <h3>Entre no ecossistema</h3>
+                  <p>
+                    Acesse as ferramentas e os canais destinados ao licenciado.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <h3>Aprenda o modelo</h3>
+                  <p>
+                    Use treinamentos, materiais de apoio e apresentações
+                    oficiais.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <h3>Conecte clientes</h3>
+                  <p>
+                    Entenda necessidades e apresente a solução compatível com
+                    cada perfil.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>04</span>
+                <div>
+                  <h3>Construa sua carteira</h3>
+                  <p>
+                    Acompanhe a operação e amplie sua base dentro das regras do
+                    programa.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>05</span>
+                <div>
+                  <h3>Expanda sua atuação</h3>
+                  <p>
+                    Desenvolva novas frentes e, se fizer sentido, apresente o
+                    licenciamento a parceiros.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- 09 · Autoridade e visão institucional -->
+        <section
+          class="lp-section lp-dark"
+          id="lp-institucional"
+          aria-labelledby="lp-institucional-title"
+        >
+          <div class="container lp-authority-grid">
+            <div>
+              <span class="eyebrow">MARCA, TRAJETÓRIA E RECONHECIMENTO</span>
+              <h2 id="lp-institucional-title">
+                Uma oportunidade fica mais forte quando existe estrutura por
+                trás.
+              </h2>
+              <p>
+                A iGreen nasceu em 2021, ampliou sua base de clientes e expandiu
+                o ecossistema para telecom, seguros e atuação internacional.
+              </p>
+              <ul class="lp-recognition-list">
+                <li>
+                  <strong>RA1000</strong
+                  ><span>reconhecimento em atendimento</span>
+                </li>
+                <li>
+                  <strong>GPTW</strong
+                  ><span>certificação de ambiente de trabalho</span>
+                </li>
+                <li>
+                  <strong>Prêmio Reclame Aqui</strong
+                  ><span>indicação divulgada pela marca</span>
+                </li>
+              </ul>
+            </div>
+            <figure class="lp-forbes-card">
+              <img
+                src="./img/capa-forbes.webp"
+                alt="Publicação da Forbes relacionada à liderança da iGreen"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Liderança em destaque</strong
+                ><span
+                  >A trajetória institucional destaca o reconhecimento da CEO
+                  Amanda Durante pela Forbes.</span
+                >
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- 10 · Ecossistema -->
+        <section
+          class="lp-section"
+          id="lp-ecossistema"
+          aria-labelledby="lp-ecossistema-title"
+        >
+          <div class="container">
+            <div class="lp-section-head">
+              <span class="eyebrow">UM ECOSSISTEMA, VÁRIAS FRENTES</span>
+              <h2 id="lp-ecossistema-title">
+                Soluções para diferentes necessidades.
+              </h2>
+              <p>
+                O papel comercial é conhecer o cliente e encontrar a conexão
+                adequada dentro do portfólio.
+              </p>
+            </div>
+            <div class="lp-ecosystem-grid">
+              <article>
+                <h3>Conexão Green</h3>
+                <p>Soluções ligadas ao consumo inteligente de energia.</p>
+              </article>
+              <article>
+                <h3>Conexão Livre</h3>
+                <p>
+                  Atuação voltada a empresas elegíveis ao Mercado Livre de
+                  Energia.
+                </p>
+              </article>
+              <article>
+                <h3>Placas e Solar</h3>
+                <p>
+                  Soluções fotovoltaicas para perfis interessados em geração
+                  solar.
+                </p>
+              </article>
+              <article>
+                <h3>Telecom</h3>
+                <p>Conectividade como frente de relacionamento e oferta.</p>
+              </article>
+              <article>
+                <h3>Seguros</h3>
+                <p>
+                  Proteção veicular dentro do ecossistema de multisserviços.
+                </p>
+              </article>
+              <article>
+                <h3>Expansão</h3>
+                <p>
+                  Desenvolvimento de novos licenciados conforme as regras do
+                  programa.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 11 · Estrutura oferecida -->
+        <section
+          class="lp-section lp-dark"
+          id="lp-estrutura"
+          aria-labelledby="lp-estrutura-title"
+        >
+          <div class="container">
+            <div class="lp-section-head">
+              <span class="eyebrow">APOIO PARA A OPERAÇÃO</span>
+              <h2 id="lp-estrutura-title">
+                Você entra com disposição. A estrutura já existe.
+              </h2>
+              <p>
+                Ferramentas digitais, capacitação e suporte ajudam a organizar a
+                atuação do licenciado.
+              </p>
+            </div>
+            <div class="lp-card-grid">
+              <article>
+                <span>ACADEMY</span>
+                <h3>Treinamento</h3>
+                <p>
+                  Conteúdos e encontros sobre produtos, abordagem, operação e
+                  atualizações.
+                </p>
+              </article>
+              <article>
+                <span>OFFICE E APP</span>
+                <h3>Gestão digital</h3>
+                <p>
+                  Ferramentas para acompanhar a atuação e administrar o negócio.
+                </p>
+              </article>
+              <article>
+                <span>SUPORTE</span>
+                <h3>Apoio ao licenciado</h3>
+                <p>
+                  Canais para dúvidas operacionais e orientação sobre as
+                  conexões.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12 · Perguntas frequentes -->
+        <section
+          class="lp-section"
+          id="lp-perguntas"
+          aria-labelledby="lp-perguntas-title"
+        >
+          <div class="container lp-faq-wrap">
+            <div class="lp-section-head">
+              <span class="eyebrow">ANTES DA DECISÃO</span>
+              <h2 id="lp-perguntas-title">
+                Perguntas importantes, respostas transparentes.
+              </h2>
+            </div>
+            <div class="lp-faq">
+              <details>
+                <summary>Preciso entender de energia antes de começar?</summary>
+                <p>
+                  Não é necessário chegar como especialista. A iGreen
+                  disponibiliza treinamentos, materiais e canais de suporte.
+                  Cabe ao licenciado estudar as regras e manter a comunicação
+                  alinhada aos materiais oficiais.
+                </p>
+              </details>
+              <details>
+                <summary>Existe salário ou renda garantida?</summary>
+                <p>
+                  Não. O licenciamento é uma atividade comercial independente.
+                  Resultados dependem de atuação, carteira, produtos, regras
+                  vigentes e outras condições do programa.
+                </p>
+              </details>
+              <details>
+                <summary>Preciso ter loja ou estoque?</summary>
+                <p>
+                  A operação é apresentada como digital e apoiada por
+                  plataforma, aplicativos, materiais e canais online. Alguns
+                  serviços podem ter processos específicos.
+                </p>
+              </details>
+              <details>
+                <summary>Os casos apresentados garantem resultados?</summary>
+                <p>
+                  Não. Casos individuais não representam promessa. O desempenho
+                  varia conforme dedicação, estratégia, carteira, região,
+                  produtos e regras vigentes.
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13 · Chamada final -->
+        <section
+          class="lp-section lp-closing"
+          id="lp-contato"
+          aria-labelledby="lp-contato-title"
+        >
+          <div class="container">
+            <span class="eyebrow">O PRÓXIMO PASSO É INFORMAÇÃO</span>
+            <h2 id="lp-contato-title">Entenda seu momento antes de decidir.</h2>
+            <p>
+              Volte ao funil, responda à triagem e escolha entre conversar com o
+              time ou seguir por conta própria.
+            </p>
+            <button class="button button-primary" type="button" data-start-quiz>
+              DESCOBRIR MEU PERFIL <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <img src="./img/igreen-logo.png" alt="iGreen Energy" /><span
+        >O futuro começa com uma escolha.</span
+      ><small
+        >Licenciamento empresarial. Condições e resultados dependem das regras
+        vigentes e do desempenho de cada licenciado.</small
+      >
+    </footer>
+    <script src="./script.js" defer></script>
+    <!-- AUDITORIA PARA DECISÃO — estatística institucional não publicada: +R$ 1 Bi de boletos pagos de energia. -->
+  </body>
+</html>
