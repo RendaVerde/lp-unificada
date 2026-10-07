@@ -432,97 +432,180 @@ $("editAnswers").addEventListener("click", () => {
 // 08 · Simulador de carteira recorrente
 const portfolioSimulator = $("simulador-carteira");
 if (portfolioSimulator) {
-  const PORTFOLIO_PROFILES = {
-    licensee: {
-      energyRates: [0.02, 0.04],
-      energyLabel: "2%–4%",
-      energyNote: "Conforme categoria de bônus e contrato.",
-      telecomValue: 7,
-      telecomLabel: "R$ 7,00",
-      telecomNote: "Por conexão elegível e paga.",
-      insuranceRate: 0.05,
-      insuranceLabel: "5%",
-      insuranceNote: "Referência informada; confirme a regra vigente.",
-      profileNote: "Valores de geração própria usados como referência. Confirme a categoria de bônus e as regras vigentes com o especialista.",
-    },
-    referrer: {
-      energyRates: [0.01, 0.02],
-      energyLabel: "1%–2%",
-      energyNote: "Referência do fluxo de indicação.",
-      telecomValue: 3.5,
-      telecomLabel: "R$ 3,50",
-      telecomNote: "Por indicação elegível e paga.",
-      insuranceRate: 0.025,
-      insuranceLabel: "2,5%",
-      insuranceNote: "Referência informada; confirme a regra vigente.",
-      profileNote: "Valores de indicação usados como referência. Confirme as condições vigentes com o especialista antes de aderir.",
-    },
+  const SIM_SETTINGS = Object.freeze({
+    licensee: Object.freeze({
+      energyBasisPoints: Object.freeze([200, 400]),
+      telecomCashbackCents: 700,
+      insuranceBasisPoints: 500,
+    }),
+    referrer: Object.freeze({
+      energyBasisPoints: Object.freeze({
+        range: Object.freeze([100, 200]),
+        A: Object.freeze([200, 200]),
+        B: Object.freeze([100, 100]),
+        C: Object.freeze([50, 50]),
+      }),
+      telecomMinimumCents: 5490,
+      telecomCashbackCents: 350,
+      insuranceBasisPoints: 250,
+    }),
+    maxClients: 1000,
+    maxAmount: 100000,
+  });
+  const simState = {
+    licensee: { energyBase: 500, energyCount: 10, energyRule: "range", telecomPlan: 54.9, telecomCount: 10, insuranceBase: 300, insuranceCount: 10 },
+    referrer: { energyBase: 200, energyCount: 10, energyRule: "range", telecomPlan: 54.9, telecomCount: 10, insuranceBase: 200, insuranceCount: 10 },
   };
   const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-  const profileButtons = [...portfolioSimulator.querySelectorAll("[data-portfolio-profile]")];
-  const clientFields = [...portfolioSimulator.querySelectorAll("[data-portfolio-field]")];
-  const energyRate = $("portfolioEnergyRate");
-  const energyNote = $("portfolioEnergyNote");
-  const telecomRate = $("portfolioTelecomRate");
-  const telecomNote = $("portfolioTelecomNote");
-  const insuranceRate = $("portfolioInsuranceRate");
-  const insuranceNote = $("portfolioInsuranceNote");
-  const profileNote = $("portfolioProfileNote");
-  const estimate = $("portfolioEstimate");
-  const breakdown = $("portfolioBreakdown");
+  const simFields = [...portfolioSimulator.querySelectorAll("[data-sim-field]")];
+  const simField = Object.fromEntries(simFields.map((field) => [field.dataset.simField, field]));
+  const profileButtons = [...portfolioSimulator.querySelectorAll("[data-sim-profile]")];
   let activeProfile = "licensee";
   let simulatorTracked = false;
-  const formatCurrency = (value) => currency.format(value);
-  const formatRange = (minimum, maximum) => minimum === maximum ? formatCurrency(minimum) : `${formatCurrency(minimum)} a ${formatCurrency(maximum)}`;
-  const getClientCount = (fieldName) => {
-    const field = portfolioSimulator.querySelector(`[data-portfolio-field="${fieldName}"]`);
-    const value = Number.parseInt(field?.value, 10);
-    return Number.isFinite(value) ? Math.min(1000, Math.max(0, value)) : 0;
-  };
-  function updatePortfolioSimulator() {
-    const profile = PORTFOLIO_PROFILES[activeProfile];
-    const energyClients = getClientCount("energy");
-    const insuranceClients = getClientCount("insurance");
-    const telecomClients = getClientCount("telecom");
-    const energyMinimum = energyClients * 500 * profile.energyRates[0];
-    const energyMaximum = energyClients * 500 * profile.energyRates[1];
-    const insuranceTotal = insuranceClients * 300 * profile.insuranceRate;
-    const telecomTotal = telecomClients * profile.telecomValue;
-    energyRate.textContent = profile.energyLabel;
-    energyNote.textContent = profile.energyNote;
-    telecomRate.textContent = profile.telecomLabel;
-    telecomNote.textContent = profile.telecomNote;
-    insuranceRate.textContent = profile.insuranceLabel;
-    insuranceNote.textContent = profile.insuranceNote;
-    profileNote.textContent = profile.profileNote;
-    estimate.textContent = formatRange(energyMinimum + insuranceTotal + telecomTotal, energyMaximum + insuranceTotal + telecomTotal);
-    breakdown.textContent = `Energia: ${formatRange(energyMinimum, energyMaximum)} · Seguros: ${formatCurrency(insuranceTotal)} · Telecom: ${formatCurrency(telecomTotal)}`;
+
+  const simMoney = (cents) => currency.format(cents / 100);
+  const simRange = (minimum, maximum) => minimum === maximum ? simMoney(minimum) : `${simMoney(minimum)} a ${simMoney(maximum)}`;
+  const simPercent = (basisPoints) => `${String(basisPoints / 100).replace(".", ",")}%`;
+  function simSetText(selector, value) {
+    portfolioSimulator.querySelector(selector).textContent = value;
   }
-  profileButtons.forEach((button) => button.addEventListener("click", () => {
-    activeProfile = button.dataset.portfolioProfile;
-    profileButtons.forEach((item) => {
-      const active = item === button;
-      item.classList.toggle("is-active", active);
-      item.setAttribute("aria-pressed", String(active));
-    });
-    updatePortfolioSimulator();
-    eventTrack("simulador_carteira_perfil", { simulator_profile: activeProfile });
-  }));
-  clientFields.forEach((field) => {
-    field.addEventListener("input", () => {
-      updatePortfolioSimulator();
-      if (!simulatorTracked) {
-        simulatorTracked = true;
-        eventTrack("simulador_carteira_iniciado", { simulator_profile: activeProfile });
+  function simReadCount(name) {
+    const value = simField[name].valueAsNumber;
+    if (!Number.isInteger(value) || value < 0 || value > SIM_SETTINGS.maxClients)
+      throw new RangeError("Informe de 0 a 1.000 clientes, sem casas decimais.");
+    return value;
+  }
+  function simReadAmount(name, minimum = 0) {
+    const value = simField[name].valueAsNumber;
+    if (!Number.isFinite(value) || value < minimum || value > SIM_SETTINGS.maxAmount || Math.abs(value * 100 - Math.round(value * 100)) > 0.000001)
+      throw new RangeError(`Informe valores entre ${currency.format(minimum)} e ${currency.format(SIM_SETTINGS.maxAmount)}, com até duas casas decimais.`);
+    return value;
+  }
+  function calculateSimulation(input) {
+    const settings = SIM_SETTINGS[input.profile];
+    const energyRates = input.profile === "licensee" ? settings.energyBasisPoints : settings.energyBasisPoints[input.energyRule];
+    if (!energyRates) throw new RangeError("Selecione uma regra válida de energia.");
+    const energyCents = Math.round(input.energyBase * 100);
+    const insuranceCents = Math.round(input.insuranceBase * 100);
+    const energyMin = input.energyCount * Math.round((energyCents * energyRates[0]) / 10000);
+    const energyMax = input.energyCount * Math.round((energyCents * energyRates[1]) / 10000);
+    const telecom = input.telecomCount * settings.telecomCashbackCents;
+    const insurance = input.insuranceCount * Math.round((insuranceCents * settings.insuranceBasisPoints) / 10000);
+    const result = { energyMin, energyMax, telecom, insurance, totalMin: energyMin + telecom + insurance, totalMax: energyMax + telecom + insurance };
+    if (input.profile === "referrer") {
+      const telecomPlanCents = Math.round(input.telecomPlan * 100);
+      result.telecomPlanCents = telecomPlanCents;
+      result.telecomRemaining = Math.max(0, telecomPlanCents - telecom);
+      result.telecomCredit = Math.max(0, telecom - telecomPlanCents);
+      result.telecomTarget = Math.ceil(telecomPlanCents / settings.telecomCashbackCents);
+    }
+    return result;
+  }
+  function readSimulation() {
+    return {
+      profile: activeProfile,
+      energyBase: simReadAmount("energyBase"),
+      energyCount: simReadCount("energyCount"),
+      energyRule: simField.energyRule.value,
+      telecomPlan: activeProfile === "referrer" ? simReadAmount("telecomPlan", 54.9) : simField.telecomPlan.valueAsNumber,
+      telecomCount: simReadCount("telecomCount"),
+      insuranceBase: simReadAmount("insuranceBase"),
+      insuranceCount: simReadCount("insuranceCount"),
+    };
+  }
+  function saveSimulationState() {
+    for (const [name, field] of Object.entries(simField))
+      simState[activeProfile][name] = field.tagName === "SELECT" ? field.value : field.valueAsNumber;
+  }
+  function loadSimulationState(profile) {
+    for (const [name, value] of Object.entries(simState[profile])) simField[name].value = String(value);
+  }
+  function configureSimulationProfile() {
+    const referrer = activeProfile === "referrer";
+    $("sim-energy-rule-wrap").hidden = !referrer;
+    $("sim-telecom-plan-wrap").hidden = !referrer;
+    $("sim-licensee-actions").hidden = referrer;
+    $("sim-referrer-actions").hidden = !referrer;
+    $("sim-licensee-sources").hidden = referrer;
+    $("sim-referrer-sources").hidden = !referrer;
+    portfolioSimulator.querySelector("[data-sim-goal]").hidden = !referrer;
+    $("sim-energy-base-label").textContent = referrer ? "Boleto mensal (R$)" : "Conta mensal (R$)";
+    $("sim-energy-note").textContent = referrer ? "Cashback conforme a distribuidora." : "Conforme categoria de bônus e contrato.";
+    $("sim-energy-help").textContent = referrer ? "Parcela elegível por cliente." : "Base elegível por cliente.";
+    $("sim-telecom-rate").textContent = referrer ? "R$ 3,50" : "R$ 7,00";
+    $("sim-telecom-note").textContent = referrer ? "Cashback fixo por indicação paga." : "Por conexão elegível e paga.";
+    $("sim-insurance-rate").textContent = referrer ? "2,5%" : "5%";
+    $("sim-insurance-note").textContent = referrer ? "Taxa de simulação a confirmar." : "Referência informada; confirme a regra vigente.";
+    $("sim-insurance-term").textContent = referrer ? "Seguros · a confirmar" : "Seguros";
+    $("sim-result-note").textContent = referrer ? "Estimativa com indicações pagas. Seguros a confirmar." : "Estimativa com clientes ativos e pagamentos elegíveis.";
+    $("sim-disclaimer").textContent = referrer
+      ? "Estimativa condicionada a clientes ativos, pagamentos e elegibilidade. Os benefícios têm regras de uso próprias e não representam uma renda garantida ou um saldo único para saque. Em Telecom, o cashback abate sua fatura e o excedente fica para as próximas."
+      : "Cálculo ilustrativo, sem garantia de renda. O resultado depende de clientes ativos, pagamentos, elegibilidade, categoria de bônus e regras contratuais vigentes. Valores de geração própria usados como referência.";
+  }
+  function updateSimulation() {
+    const error = $("sim-error");
+    try {
+      const input = readSimulation();
+      const result = calculateSimulation(input);
+      saveSimulationState();
+      error.hidden = true;
+      error.textContent = "";
+      simSetText("[data-sim-total]", simRange(result.totalMin, result.totalMax));
+      simSetText("[data-sim-energy]", simRange(result.energyMin, result.energyMax));
+      simSetText("[data-sim-telecom]", simMoney(result.telecom));
+      simSetText("[data-sim-insurance]", simMoney(result.insurance));
+      const energyRates = activeProfile === "licensee" ? SIM_SETTINGS.licensee.energyBasisPoints : SIM_SETTINGS.referrer.energyBasisPoints[input.energyRule];
+      $("sim-energy-rate").textContent = energyRates[0] === energyRates[1] ? simPercent(energyRates[0]) : `${simPercent(energyRates[0])} a ${simPercent(energyRates[1])}`;
+      if (activeProfile === "referrer") {
+        const telecomGoal = result.telecomRemaining > 0
+          ? `Telecom: restam ${simMoney(result.telecomRemaining)} do seu plano de ${simMoney(result.telecomPlanCents)}. Meta para cobri-lo: ${result.telecomTarget} indicações pagas.`
+          : `Telecom: plano de ${simMoney(result.telecomPlanCents)} coberto neste cenário. Crédito para próximas faturas: ${simMoney(result.telecomCredit)}.`;
+        simSetText("[data-sim-goal]", telecomGoal);
       }
+      portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.removeAttribute("aria-disabled"));
+    } catch (reason) {
+      error.textContent = reason.message;
+      error.hidden = false;
+      ["[data-sim-total]", "[data-sim-energy]", "[data-sim-telecom]", "[data-sim-insurance]"].forEach((selector) => simSetText(selector, "—"));
+      if (activeProfile === "referrer") simSetText("[data-sim-goal]", "Revise os campos para atualizar a estimativa.");
+      portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.setAttribute("aria-disabled", "true"));
+    }
+    portfolioSimulator.querySelectorAll("[data-sim-step]").forEach((button) => {
+      const value = $(button.dataset.simTarget).valueAsNumber;
+      button.disabled = Number(button.dataset.simStep) < 0 ? value <= 0 : value >= SIM_SETTINGS.maxClients;
     });
-    field.addEventListener("blur", () => {
-      field.value = String(getClientCount(field.dataset.portfolioField));
-      updatePortfolioSimulator();
+  }
+  function setSimulationProfile(profile, track = true) {
+    activeProfile = profile;
+    loadSimulationState(profile);
+    profileButtons.forEach((button) => {
+      const active = button.dataset.simProfile === profile;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
     });
-  });
-  $("portfolioSimulatorCta").addEventListener("click", () => eventTrack("simulador_carteira_cta", { simulator_profile: activeProfile }));
-  updatePortfolioSimulator();
+    configureSimulationProfile();
+    updateSimulation();
+    if (track) eventTrack("simulador_carteira_perfil", { simulator_profile: activeProfile });
+  }
+  profileButtons.forEach((button) => button.addEventListener("click", () => setSimulationProfile(button.dataset.simProfile)));
+  simFields.forEach((field) => field.addEventListener("input", () => {
+    updateSimulation();
+    if (!simulatorTracked) {
+      simulatorTracked = true;
+      eventTrack("simulador_carteira_iniciado", { simulator_profile: activeProfile });
+    }
+  }));
+  portfolioSimulator.querySelectorAll("[data-sim-step]").forEach((button) => button.addEventListener("click", () => {
+    const field = $(button.dataset.simTarget);
+    const previous = Number.isFinite(field.valueAsNumber) ? Math.trunc(field.valueAsNumber) : 0;
+    field.value = String(Math.min(SIM_SETTINGS.maxClients, Math.max(0, previous + Number(button.dataset.simStep))));
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+  }));
+  portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.addEventListener("click", (event) => {
+    if (link.getAttribute("aria-disabled") === "true") event.preventDefault();
+    else eventTrack("simulador_carteira_cta", { simulator_profile: activeProfile });
+  }));
+  setSimulationProfile("licensee", false);
 }
 
 // 09 · Prova social, filtros e lightbox

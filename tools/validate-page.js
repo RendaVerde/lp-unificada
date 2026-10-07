@@ -34,6 +34,9 @@ function validateIds() {
   const scriptIds = matches(script, /\$\(["']([^"']+)["']\)/g);
   const missingScriptIds = unique(scriptIds).filter((id) => !ids.includes(id));
   if (missingScriptIds.length) errors.push(`IDs do JavaScript ausentes: ${missingScriptIds.join(", ")}`);
+  const anchorTargets = matches(html, /\bhref=["']#([^"']+)["']/g);
+  const missingAnchors = unique(anchorTargets).filter((target) => !ids.includes(target));
+  if (missingAnchors.length) errors.push(`Âncoras sem destino: ${missingAnchors.join(", ")}`);
   return ids.length;
 }
 
@@ -116,13 +119,19 @@ function validateJourney() {
   const requiredIds = [
     "apresentacao", "analise", "resultado", "leadForm", "presentationVideo",
     "lp-numeros", "lp-modelo", "lp-como-funciona", "lp-institucional",
-    "lp-ecossistema", "lp-estrutura", "lp-perguntas", "lp-contato",
+    "lp-ecossistema", "lp-perguntas", "lp-contato",
     "exploreLink", "simulador-carteira", "portfolioEstimate",
     "prova-social", "proofFilters", "proofSlider", "lightbox",
   ];
   requiredIds.forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`Bloco obrigatório ausente: ${id}`);
   });
+  const landingOrder = ["lp-numeros", "lp-modelo", "lp-ecossistema", "lp-como-funciona", "lp-institucional", "simulador-carteira", "prova-social", "lp-perguntas", "lp-contato"];
+  const positions = landingOrder.map((id) => html.indexOf(`id="${id}"`));
+  if (positions.some((position, index) => index > 0 && position <= positions[index - 1])) errors.push("Ordem das seções reveladas incorreta.");
+  const modelSection = html.match(/<section[^>]*id="lp-modelo"[\s\S]*?<\/section>/)?.[0] || "";
+  if ((modelSection.match(/<article>/g) || []).length !== 6) errors.push("A seção unificada deve conter seis cards.");
+  if (html.includes('id="lp-estrutura"') || html.includes("APOIO PARA A OPERAÇÃO")) errors.push("A seção antiga de apoio não foi removida por completo.");
   const mediaCount = matches(html, /<(?:video|iframe)\b/gi, 0).length;
   if (mediaCount !== 1) errors.push(`A página deve ter um único player; encontrados: ${mediaCount}.`);
   if ((script.match(/\bconst CONFIG\b/g) || []).length !== 1) errors.push("CONFIG deve existir uma única vez.");
