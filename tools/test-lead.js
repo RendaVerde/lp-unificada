@@ -16,7 +16,7 @@ const payload = {
   whatsapp: "(00) 00000-0000",
   cidade: "Vitória",
   uf: "ES",
-  investimento_faixa: "De R$ 1.000 a R$ 3.000",
+  investimento_faixa: "De R$ 1.001 a R$ 1.500",
   objetivo: "empreender",
   experiencia_vendas: "sim",
   disponibilidade: "meio_periodo",

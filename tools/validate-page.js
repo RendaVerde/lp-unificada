@@ -140,7 +140,7 @@ function validateJourney() {
   const questionPositions = questionOrder.map((question) => html.indexOf(`data-question="${question}"`));
   if (questionPositions.some((position, index) => position < 0 || (index > 0 && position <= questionPositions[index - 1]))) errors.push("Ordem das perguntas do funil incorreta.");
   const investmentStep = html.match(/<fieldset[^>]*data-question="investment"[\s\S]*?<\/fieldset>/)?.[0] || "";
-  if ((investmentStep.match(/name="investment"/g) || []).length !== 6) errors.push("A pergunta de investimento deve ter seis opções.");
+  if ((investmentStep.match(/name="investment"/g) || []).length !== 5) errors.push("A pergunta de investimento deve ter cinco opções.");
   if (!script.includes('sheetSiteId: "rendaverde-igreen"')) errors.push("site_id original não foi preservado.");
   if (!script.includes('landingPageId: "lp-unificada"')) errors.push("landing_page_id novo não foi aplicado.");
   if (!script.includes('["localhost", "127.0.0.1"].includes(location.hostname)')) errors.push("Bloqueio local de leads ausente.");
