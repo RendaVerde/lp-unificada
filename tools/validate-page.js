@@ -118,6 +118,7 @@ function validateIntegrations() {
 function validateJourney() {
   const requiredIds = [
     "apresentacao", "analise", "resultado", "leadForm", "presentationVideo",
+    "city", "uf",
     "lp-numeros", "lp-modelo", "lp-como-funciona", "lp-institucional",
     "lp-ecossistema", "lp-perguntas", "lp-contato",
     "exploreLink", "simulador-carteira", "portfolioEstimate",
@@ -135,6 +136,11 @@ function validateJourney() {
   const mediaCount = matches(html, /<(?:video|iframe)\b/gi, 0).length;
   if (mediaCount !== 1) errors.push(`A página deve ter um único player; encontrados: ${mediaCount}.`);
   if ((script.match(/\bconst CONFIG\b/g) || []).length !== 1) errors.push("CONFIG deve existir uma única vez.");
+  const questionOrder = ["name", "email", "phone", "location", "goal", "experience", "investment", "availability"];
+  const questionPositions = questionOrder.map((question) => html.indexOf(`data-question="${question}"`));
+  if (questionPositions.some((position, index) => position < 0 || (index > 0 && position <= questionPositions[index - 1]))) errors.push("Ordem das perguntas do funil incorreta.");
+  const investmentStep = html.match(/<fieldset[^>]*data-question="investment"[\s\S]*?<\/fieldset>/)?.[0] || "";
+  if ((investmentStep.match(/name="investment"/g) || []).length !== 6) errors.push("A pergunta de investimento deve ter seis opções.");
   if (!script.includes('sheetSiteId: "rendaverde-igreen"')) errors.push("site_id original não foi preservado.");
   if (!script.includes('landingPageId: "lp-unificada"')) errors.push("landing_page_id novo não foi aplicado.");
   if (!script.includes('["localhost", "127.0.0.1"].includes(location.hostname)')) errors.push("Bloqueio local de leads ausente.");
@@ -152,7 +158,7 @@ function validateJourney() {
   ["--bg: #070909", "--bg2: #0d1010", "--panel: #111515", "--panel2: #0b0f0d", "--green: #00e110", "--green2: #00f572"].forEach((token) => {
     if (!css.includes(token)) errors.push(`Token original ausente: ${token}`);
   });
-  ["tipo", "lead_id", "landing_page_id", "nome", "email", "whatsapp", "objetivo", "experiencia_vendas", "disponibilidade", "perfil", "score", "rota_resultado", "momento"].forEach((field) => {
+  ["tipo", "lead_id", "landing_page_id", "nome", "email", "whatsapp", "cidade", "uf", "investimento_faixa", "objetivo", "experiencia_vendas", "disponibilidade", "perfil", "score", "rota_resultado", "momento"].forEach((field) => {
     if (!script.includes(`${field}:`)) errors.push(`Campo do payload ausente: ${field}`);
   });
 }
@@ -161,11 +167,12 @@ function validateContentPolicy() {
   const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
   const withoutInlineScripts = withoutComments.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
   const forbidden = /R\$|%|gratuit|grátis|à vista|12x|investimento|bônus|royalt|comiss/i;
-  const outsideAllowedHtml = ["lp-numeros", "simulador-carteira", "prova-social"].reduce(
+  let outsideAllowedHtml = ["lp-numeros", "simulador-carteira", "prova-social"].reduce(
     (source, id) => source.replace(new RegExp(`<section[^>]*id=["']${id}["'][\\s\\S]*?<\\/section>`, "i"), ""),
     withoutInlineScripts,
   );
-  const outsideAllowedScript = script.split("// 08 · Simulador de carteira recorrente")[0];
+  outsideAllowedHtml = outsideAllowedHtml.replace(/<fieldset[^>]*data-question="investment"[\s\S]*?<\/fieldset>/i, "");
+  const outsideAllowedScript = script.split("// 08 · Simulador de carteira recorrente")[0].replace(/investimento_faixa/g, "");
   const htmlMatch = outsideAllowedHtml.match(forbidden);
   const scriptMatch = outsideAllowedScript.match(forbidden);
   if (htmlMatch) errors.push(`Termo não aprovado no HTML público: ${htmlMatch[0]}`);

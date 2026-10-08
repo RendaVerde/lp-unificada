@@ -1,0 +1,62 @@
+diff --git a/integrations/google-sheets/Code.gs b/integrations/google-sheets/Code.gs
+--- a/integrations/google-sheets/Code.gs
++++ b/integrations/google-sheets/Code.gs
+@@ -6,7 +6,8 @@ const LEADS_HEADERS = {
+   licenciado: [
+     'Data', 'Lead ID', 'Nome', 'WhatsApp', 'Email', 'Cidade', 'Objetivo',
+     'Tempo', 'Perfil', 'Momento', 'Score', 'Rota resultado', 'Origem',
+-    'Mídia', 'Campanha', 'Conteúdo', 'GCLID', 'FBCLID', 'Página',
++    'Mídia', 'Campanha', 'Conteúdo', 'GCLID', 'FBCLID', 'Página', 'UF',
++    'Investimento faixa',
+   ],
+   cliente: [
+     'Data', 'Lead ID', 'Nome', 'WhatsApp', 'Email', 'Cidade', 'Interesse',
+@@ -22,6 +23,10 @@ const LEADS_COLUMNS = {
+   nome: 'nome', 'nome completo': 'nome',
+   whatsapp: 'whatsapp', telefone: 'whatsapp', celular: 'whatsapp',
+   email: 'email', cidade: 'cidade', 'cidade uf': 'cidade',
++  uf: 'uf', estado: 'uf',
++  investimento: 'investimento_faixa',
++  'investimento faixa': 'investimento_faixa',
++  'faixa de investimento': 'investimento_faixa',
+   objetivo: 'objetivo', interesse: 'interesse',
+   tempo: 'tempo', 'tempo disponivel': 'tempo',
+   perfil: 'perfil', 'perfil comercial': 'perfil', momento: 'momento',
+@@ -95,6 +100,17 @@ function doPost(e) {
+         headers.push('Lead ID');
+         fields.push('lead_id');
+       }
++      const extraColumns = lead.tipo === 'licenciado' ? [
++        ['Cidade', 'cidade'],
++        ['UF', 'uf'],
++        ['Investimento faixa', 'investimento_faixa'],
++      ] : [];
++      extraColumns.forEach(([header, field]) => {
++        if (fields.includes(field)) return;
++        sheet.getRange(1, headers.length + 1).setValue(header);
++        headers.push(header);
++        fields.push(field);
++      });
+       const idColumn = fields.indexOf('lead_id') + 1;
+       const lastRow = sheet.getLastRow();
+       if (lastRow > 1) {
+@@ -118,7 +134,18 @@ function doPost(e) {
+       });
+       sheet.appendRow(row);
+       SpreadsheetApp.flush();
+-      return leadsResponse_({ ok: true, status: 'saved', tipo: lead.tipo });
++      const columns = {};
++      ['cidade', 'uf', 'investimento_faixa'].forEach((field) => {
++        const column = fields.indexOf(field) + 1;
++        if (column > 0) columns[field] = column;
++      });
++      return leadsResponse_({
++        ok: true,
++        status: 'saved',
++        tipo: lead.tipo,
++        row: sheet.getLastRow(),
++        columns,
++      });
+     } finally {
+       lock.releaseLock();
+     }

@@ -910,7 +910,8 @@ body:not([data-view="intro"]) .header-cta {
 .field-label span {
   color: var(--green2);
 }
-.field-label input {
+.field-label input,
+.field-label select {
   display: block;
   width: 100%;
   min-height: 62px;
@@ -922,7 +923,11 @@ body:not([data-view="intro"]) .header-cta {
   color: var(--txt);
   font-size: 17px;
 }
-.field-label input:focus {
+.field-label select {
+  appearance: none;
+}
+.field-label input:focus,
+.field-label select:focus {
   outline: 0;
   border-color: var(--green2);
 }
@@ -932,6 +937,11 @@ body:not([data-view="intro"]) .header-cta {
 .field-label input:-webkit-autofill {
   -webkit-text-fill-color: var(--txt);
   box-shadow: 0 0 0 1000px #0a0e0c inset;
+}
+.location-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 12px;
 }
 .choices {
   display: grid;
@@ -1017,8 +1027,12 @@ body:not([data-view="intro"]) .header-cta {
   .quiz-actions .button {
     width: 100%;
   }
-  .field-label input {
+  .field-label input,
+  .field-label select {
     min-height: 58px;
+  }
+  .location-fields {
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 390px) {

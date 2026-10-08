@@ -260,6 +260,49 @@
             </fieldset>
             <fieldset
               class="quiz-step"
+              data-question="location"
+              data-title="Em qual cidade você mora?"
+              data-subtitle="Sua localização ajuda a indicar o melhor atendimento."
+              hidden
+            >
+              <legend class="sr-only">Cidade e estado</legend>
+              <div class="location-fields">
+                <label class="field-label" for="city"
+                  >Cidade <span>*</span
+                  ><input
+                    id="city"
+                    name="cidade"
+                    type="text"
+                    autocomplete="address-level2"
+                    minlength="2"
+                    maxlength="100"
+                    placeholder="Digite sua cidade"
+                    data-clarity-mask="true"
+                    required
+                /></label>
+                <label class="field-label" for="uf"
+                  >UF <span>*</span
+                  ><select
+                    id="uf"
+                    name="uf"
+                    autocomplete="address-level1"
+                    data-clarity-mask="true"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option>
+                    <option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option>
+                    <option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+                    <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option>
+                    <option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option>
+                    <option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+                    <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                  </select></label
+                >
+              </div>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
               data-question="goal"
               data-title="O que você busca agora?"
               data-subtitle="A resposta pode revelar um novo caminho."
@@ -323,6 +366,27 @@
             </fieldset>
             <fieldset
               class="quiz-step"
+              data-question="investment"
+              data-title="Pensando em começar agora, quanto você consegue investir para empreender?"
+              data-subtitle="Sem compromisso: isso só ajuda a indicar o melhor caminho para você."
+              hidden
+            >
+              <legend class="sr-only">Faixa de investimento disponível</legend>
+              <div
+                class="choices"
+                role="radiogroup"
+                aria-label="Quanto você consegue investir para empreender?"
+              >
+                <label><input type="radio" name="investment" value="Ainda não tenho valor disponível" data-clarity-mask="true" required /><span>Ainda não tenho valor disponível</span></label>
+                <label><input type="radio" name="investment" value="Até R$ 1.000" data-clarity-mask="true" /><span>Até R$ 1.000</span></label>
+                <label><input type="radio" name="investment" value="De R$ 1.000 a R$ 3.000" data-clarity-mask="true" /><span>De R$ 1.000 a R$ 3.000</span></label>
+                <label><input type="radio" name="investment" value="De R$ 3.000 a R$ 10.000" data-clarity-mask="true" /><span>De R$ 3.000 a R$ 10.000</span></label>
+                <label><input type="radio" name="investment" value="Acima de R$ 10.000" data-clarity-mask="true" /><span>Acima de R$ 10.000</span></label>
+                <label><input type="radio" name="investment" value="Prefiro conversar antes" data-clarity-mask="true" /><span>Prefiro conversar antes</span></label>
+              </div>
+            </fieldset>
+            <fieldset
+              class="quiz-step"
               data-question="availability"
               data-title="Quanto tempo pode dedicar?"
               data-subtitle="O próximo passo precisa caber no seu momento."
@@ -359,8 +423,8 @@
               </div>
               <label class="consent"
                 ><input id="consent" type="checkbox" required /><span
-                  >Concordo em compartilhar meus dados e respostas para receber
-                  contato sobre a oportunidade iGreen.</span
+                  >Concordo em compartilhar os dados informados neste formulário
+                  para receber contato sobre a oportunidade iGreen.</span
                 ></label
               >
             </fieldset>
