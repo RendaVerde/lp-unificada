@@ -360,10 +360,11 @@ function whatsappLink(data) {
     empreender: "empreender",
   };
   const message = [
-    `Olá! Sou ${data.nome} e conheci a oportunidade iGreen pela LP de vídeo.`,
+    `Olá! Sou ${data.nome}.`,
     `Meu objetivo: ${goals[data.objetivo] || data.objetivo}.`,
     `Experiência com vendas: ${data.experiencia_vendas === "sim" ? "sim" : "ainda não"}.`,
     `Disponibilidade: ${data.disponibilidade.replace(/_/g, " ")}.`,
+    `Pretenção de investimento: R$ ${data.investimento_faixa}.`,
     "Gostaria de entender os próximos passos para o licenciamento.",
   ].join("\n");
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -480,51 +481,110 @@ if (portfolioSimulator) {
     maxAmount: 100000,
   });
   const simState = {
-    licensee: { energyBase: 500, energyCount: 10, energyRule: "range", telecomPlan: 54.9, telecomCount: 10, insuranceBase: 300, insuranceCount: 10 },
-    referrer: { energyBase: 200, energyCount: 10, energyRule: "range", telecomPlan: 54.9, telecomCount: 10, insuranceBase: 200, insuranceCount: 10 },
+    licensee: {
+      energyBase: 500,
+      energyCount: 10,
+      energyRule: "range",
+      telecomPlan: 54.9,
+      telecomCount: 10,
+      insuranceBase: 300,
+      insuranceCount: 10,
+    },
+    referrer: {
+      energyBase: 200,
+      energyCount: 10,
+      energyRule: "range",
+      telecomPlan: 54.9,
+      telecomCount: 10,
+      insuranceBase: 200,
+      insuranceCount: 10,
+    },
   };
-  const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-  const simFields = [...portfolioSimulator.querySelectorAll("[data-sim-field]")];
-  const simField = Object.fromEntries(simFields.map((field) => [field.dataset.simField, field]));
-  const profileButtons = [...portfolioSimulator.querySelectorAll("[data-sim-profile]")];
+  const currency = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+  const simFields = [
+    ...portfolioSimulator.querySelectorAll("[data-sim-field]"),
+  ];
+  const simField = Object.fromEntries(
+    simFields.map((field) => [field.dataset.simField, field]),
+  );
+  const profileButtons = [
+    ...portfolioSimulator.querySelectorAll("[data-sim-profile]"),
+  ];
   let activeProfile = "licensee";
   let simulatorTracked = false;
 
   const simMoney = (cents) => currency.format(cents / 100);
-  const simRange = (minimum, maximum) => minimum === maximum ? simMoney(minimum) : `${simMoney(minimum)} a ${simMoney(maximum)}`;
-  const simPercent = (basisPoints) => `${String(basisPoints / 100).replace(".", ",")}%`;
+  const simRange = (minimum, maximum) =>
+    minimum === maximum
+      ? simMoney(minimum)
+      : `${simMoney(minimum)} a ${simMoney(maximum)}`;
+  const simPercent = (basisPoints) =>
+    `${String(basisPoints / 100).replace(".", ",")}%`;
   function simSetText(selector, value) {
     portfolioSimulator.querySelector(selector).textContent = value;
   }
   function simReadCount(name) {
     const value = simField[name].valueAsNumber;
-    if (!Number.isInteger(value) || value < 0 || value > SIM_SETTINGS.maxClients)
-      throw new RangeError("Informe de 0 a 1.000 clientes, sem casas decimais.");
+    if (
+      !Number.isInteger(value) ||
+      value < 0 ||
+      value > SIM_SETTINGS.maxClients
+    )
+      throw new RangeError(
+        "Informe de 0 a 1.000 clientes, sem casas decimais.",
+      );
     return value;
   }
   function simReadAmount(name, minimum = 0) {
     const value = simField[name].valueAsNumber;
-    if (!Number.isFinite(value) || value < minimum || value > SIM_SETTINGS.maxAmount || Math.abs(value * 100 - Math.round(value * 100)) > 0.000001)
-      throw new RangeError(`Informe valores entre ${currency.format(minimum)} e ${currency.format(SIM_SETTINGS.maxAmount)}, com até duas casas decimais.`);
+    if (
+      !Number.isFinite(value) ||
+      value < minimum ||
+      value > SIM_SETTINGS.maxAmount ||
+      Math.abs(value * 100 - Math.round(value * 100)) > 0.000001
+    )
+      throw new RangeError(
+        `Informe valores entre ${currency.format(minimum)} e ${currency.format(SIM_SETTINGS.maxAmount)}, com até duas casas decimais.`,
+      );
     return value;
   }
   function calculateSimulation(input) {
     const settings = SIM_SETTINGS[input.profile];
-    const energyRates = input.profile === "licensee" ? settings.energyBasisPoints : settings.energyBasisPoints[input.energyRule];
-    if (!energyRates) throw new RangeError("Selecione uma regra válida de energia.");
+    const energyRates =
+      input.profile === "licensee"
+        ? settings.energyBasisPoints
+        : settings.energyBasisPoints[input.energyRule];
+    if (!energyRates)
+      throw new RangeError("Selecione uma regra válida de energia.");
     const energyCents = Math.round(input.energyBase * 100);
     const insuranceCents = Math.round(input.insuranceBase * 100);
-    const energyMin = input.energyCount * Math.round((energyCents * energyRates[0]) / 10000);
-    const energyMax = input.energyCount * Math.round((energyCents * energyRates[1]) / 10000);
+    const energyMin =
+      input.energyCount * Math.round((energyCents * energyRates[0]) / 10000);
+    const energyMax =
+      input.energyCount * Math.round((energyCents * energyRates[1]) / 10000);
     const telecom = input.telecomCount * settings.telecomCashbackCents;
-    const insurance = input.insuranceCount * Math.round((insuranceCents * settings.insuranceBasisPoints) / 10000);
-    const result = { energyMin, energyMax, telecom, insurance, totalMin: energyMin + telecom + insurance, totalMax: energyMax + telecom + insurance };
+    const insurance =
+      input.insuranceCount *
+      Math.round((insuranceCents * settings.insuranceBasisPoints) / 10000);
+    const result = {
+      energyMin,
+      energyMax,
+      telecom,
+      insurance,
+      totalMin: energyMin + telecom + insurance,
+      totalMax: energyMax + telecom + insurance,
+    };
     if (input.profile === "referrer") {
       const telecomPlanCents = Math.round(input.telecomPlan * 100);
       result.telecomPlanCents = telecomPlanCents;
       result.telecomRemaining = Math.max(0, telecomPlanCents - telecom);
       result.telecomCredit = Math.max(0, telecom - telecomPlanCents);
-      result.telecomTarget = Math.ceil(telecomPlanCents / settings.telecomCashbackCents);
+      result.telecomTarget = Math.ceil(
+        telecomPlanCents / settings.telecomCashbackCents,
+      );
     }
     return result;
   }
@@ -534,7 +594,10 @@ if (portfolioSimulator) {
       energyBase: simReadAmount("energyBase"),
       energyCount: simReadCount("energyCount"),
       energyRule: simField.energyRule.value,
-      telecomPlan: activeProfile === "referrer" ? simReadAmount("telecomPlan", 54.9) : simField.telecomPlan.valueAsNumber,
+      telecomPlan:
+        activeProfile === "referrer"
+          ? simReadAmount("telecomPlan", 54.9)
+          : simField.telecomPlan.valueAsNumber,
       telecomCount: simReadCount("telecomCount"),
       insuranceBase: simReadAmount("insuranceBase"),
       insuranceCount: simReadCount("insuranceCount"),
@@ -542,10 +605,12 @@ if (portfolioSimulator) {
   }
   function saveSimulationState() {
     for (const [name, field] of Object.entries(simField))
-      simState[activeProfile][name] = field.tagName === "SELECT" ? field.value : field.valueAsNumber;
+      simState[activeProfile][name] =
+        field.tagName === "SELECT" ? field.value : field.valueAsNumber;
   }
   function loadSimulationState(profile) {
-    for (const [name, value] of Object.entries(simState[profile])) simField[name].value = String(value);
+    for (const [name, value] of Object.entries(simState[profile]))
+      simField[name].value = String(value);
   }
   function configureSimulationProfile() {
     const referrer = activeProfile === "referrer";
@@ -556,15 +621,29 @@ if (portfolioSimulator) {
     $("sim-licensee-sources").hidden = referrer;
     $("sim-referrer-sources").hidden = !referrer;
     portfolioSimulator.querySelector("[data-sim-goal]").hidden = !referrer;
-    $("sim-energy-base-label").textContent = referrer ? "Boleto mensal (R$)" : "Conta mensal (R$)";
-    $("sim-energy-note").textContent = referrer ? "Cashback conforme a distribuidora." : "Conforme categoria de bônus e contrato.";
-    $("sim-energy-help").textContent = referrer ? "Parcela elegível por cliente." : "Base elegível por cliente.";
+    $("sim-energy-base-label").textContent = referrer
+      ? "Boleto mensal (R$)"
+      : "Conta mensal (R$)";
+    $("sim-energy-note").textContent = referrer
+      ? "Cashback conforme a distribuidora."
+      : "Conforme categoria de bônus e contrato.";
+    $("sim-energy-help").textContent = referrer
+      ? "Parcela elegível por cliente."
+      : "Base elegível por cliente.";
     $("sim-telecom-rate").textContent = referrer ? "R$ 3,50" : "R$ 7,00";
-    $("sim-telecom-note").textContent = referrer ? "Cashback fixo por indicação paga." : "Por conexão elegível e paga.";
+    $("sim-telecom-note").textContent = referrer
+      ? "Cashback fixo por indicação paga."
+      : "Por conexão elegível e paga.";
     $("sim-insurance-rate").textContent = referrer ? "2,5%" : "5%";
-    $("sim-insurance-note").textContent = referrer ? "Taxa de simulação a confirmar." : "Referência informada; confirme a regra vigente.";
-    $("sim-insurance-term").textContent = referrer ? "Seguros · a confirmar" : "Seguros";
-    $("sim-result-note").textContent = referrer ? "Estimativa com indicações pagas. Seguros a confirmar." : "Estimativa com clientes ativos e pagamentos elegíveis.";
+    $("sim-insurance-note").textContent = referrer
+      ? "Taxa de simulação a confirmar."
+      : "Referência informada; confirme a regra vigente.";
+    $("sim-insurance-term").textContent = referrer
+      ? "Seguros · a confirmar"
+      : "Seguros";
+    $("sim-result-note").textContent = referrer
+      ? "Estimativa com indicações pagas. Seguros a confirmar."
+      : "Estimativa com clientes ativos e pagamentos elegíveis.";
     $("sim-disclaimer").textContent = referrer
       ? "Estimativa condicionada a clientes ativos, pagamentos e elegibilidade. Os benefícios têm regras de uso próprias e não representam uma renda garantida ou um saldo único para saque. Em Telecom, o cashback abate sua fatura e o excedente fica para as próximas."
       : "Cálculo ilustrativo, sem garantia de renda. O resultado depende de clientes ativos, pagamentos, elegibilidade, categoria de bônus e regras contratuais vigentes. Valores de geração própria usados como referência.";
@@ -577,29 +656,58 @@ if (portfolioSimulator) {
       saveSimulationState();
       error.hidden = true;
       error.textContent = "";
-      simSetText("[data-sim-total]", simRange(result.totalMin, result.totalMax));
-      simSetText("[data-sim-energy]", simRange(result.energyMin, result.energyMax));
+      simSetText(
+        "[data-sim-total]",
+        simRange(result.totalMin, result.totalMax),
+      );
+      simSetText(
+        "[data-sim-energy]",
+        simRange(result.energyMin, result.energyMax),
+      );
       simSetText("[data-sim-telecom]", simMoney(result.telecom));
       simSetText("[data-sim-insurance]", simMoney(result.insurance));
-      const energyRates = activeProfile === "licensee" ? SIM_SETTINGS.licensee.energyBasisPoints : SIM_SETTINGS.referrer.energyBasisPoints[input.energyRule];
-      $("sim-energy-rate").textContent = energyRates[0] === energyRates[1] ? simPercent(energyRates[0]) : `${simPercent(energyRates[0])} a ${simPercent(energyRates[1])}`;
+      const energyRates =
+        activeProfile === "licensee"
+          ? SIM_SETTINGS.licensee.energyBasisPoints
+          : SIM_SETTINGS.referrer.energyBasisPoints[input.energyRule];
+      $("sim-energy-rate").textContent =
+        energyRates[0] === energyRates[1]
+          ? simPercent(energyRates[0])
+          : `${simPercent(energyRates[0])} a ${simPercent(energyRates[1])}`;
       if (activeProfile === "referrer") {
-        const telecomGoal = result.telecomRemaining > 0
-          ? `Telecom: restam ${simMoney(result.telecomRemaining)} do seu plano de ${simMoney(result.telecomPlanCents)}. Meta para cobri-lo: ${result.telecomTarget} indicações pagas.`
-          : `Telecom: plano de ${simMoney(result.telecomPlanCents)} coberto neste cenário. Crédito para próximas faturas: ${simMoney(result.telecomCredit)}.`;
+        const telecomGoal =
+          result.telecomRemaining > 0
+            ? `Telecom: restam ${simMoney(result.telecomRemaining)} do seu plano de ${simMoney(result.telecomPlanCents)}. Meta para cobri-lo: ${result.telecomTarget} indicações pagas.`
+            : `Telecom: plano de ${simMoney(result.telecomPlanCents)} coberto neste cenário. Crédito para próximas faturas: ${simMoney(result.telecomCredit)}.`;
         simSetText("[data-sim-goal]", telecomGoal);
       }
-      portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.removeAttribute("aria-disabled"));
+      portfolioSimulator
+        .querySelectorAll(".sim-result a")
+        .forEach((link) => link.removeAttribute("aria-disabled"));
     } catch (reason) {
       error.textContent = reason.message;
       error.hidden = false;
-      ["[data-sim-total]", "[data-sim-energy]", "[data-sim-telecom]", "[data-sim-insurance]"].forEach((selector) => simSetText(selector, "—"));
-      if (activeProfile === "referrer") simSetText("[data-sim-goal]", "Revise os campos para atualizar a estimativa.");
-      portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.setAttribute("aria-disabled", "true"));
+      [
+        "[data-sim-total]",
+        "[data-sim-energy]",
+        "[data-sim-telecom]",
+        "[data-sim-insurance]",
+      ].forEach((selector) => simSetText(selector, "—"));
+      if (activeProfile === "referrer")
+        simSetText(
+          "[data-sim-goal]",
+          "Revise os campos para atualizar a estimativa.",
+        );
+      portfolioSimulator
+        .querySelectorAll(".sim-result a")
+        .forEach((link) => link.setAttribute("aria-disabled", "true"));
     }
     portfolioSimulator.querySelectorAll("[data-sim-step]").forEach((button) => {
       const value = $(button.dataset.simTarget).valueAsNumber;
-      button.disabled = Number(button.dataset.simStep) < 0 ? value <= 0 : value >= SIM_SETTINGS.maxClients;
+      button.disabled =
+        Number(button.dataset.simStep) < 0
+          ? value <= 0
+          : value >= SIM_SETTINGS.maxClients;
     });
   }
   function setSimulationProfile(profile, track = true) {
@@ -612,26 +720,51 @@ if (portfolioSimulator) {
     });
     configureSimulationProfile();
     updateSimulation();
-    if (track) eventTrack("simulador_carteira_perfil", { simulator_profile: activeProfile });
+    if (track)
+      eventTrack("simulador_carteira_perfil", {
+        simulator_profile: activeProfile,
+      });
   }
-  profileButtons.forEach((button) => button.addEventListener("click", () => setSimulationProfile(button.dataset.simProfile)));
-  simFields.forEach((field) => field.addEventListener("input", () => {
-    updateSimulation();
-    if (!simulatorTracked) {
-      simulatorTracked = true;
-      eventTrack("simulador_carteira_iniciado", { simulator_profile: activeProfile });
-    }
-  }));
-  portfolioSimulator.querySelectorAll("[data-sim-step]").forEach((button) => button.addEventListener("click", () => {
-    const field = $(button.dataset.simTarget);
-    const previous = Number.isFinite(field.valueAsNumber) ? Math.trunc(field.valueAsNumber) : 0;
-    field.value = String(Math.min(SIM_SETTINGS.maxClients, Math.max(0, previous + Number(button.dataset.simStep))));
-    field.dispatchEvent(new Event("input", { bubbles: true }));
-  }));
-  portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) => link.addEventListener("click", (event) => {
-    if (link.getAttribute("aria-disabled") === "true") event.preventDefault();
-    else eventTrack("simulador_carteira_cta", { simulator_profile: activeProfile });
-  }));
+  profileButtons.forEach((button) =>
+    button.addEventListener("click", () =>
+      setSimulationProfile(button.dataset.simProfile),
+    ),
+  );
+  simFields.forEach((field) =>
+    field.addEventListener("input", () => {
+      updateSimulation();
+      if (!simulatorTracked) {
+        simulatorTracked = true;
+        eventTrack("simulador_carteira_iniciado", {
+          simulator_profile: activeProfile,
+        });
+      }
+    }),
+  );
+  portfolioSimulator.querySelectorAll("[data-sim-step]").forEach((button) =>
+    button.addEventListener("click", () => {
+      const field = $(button.dataset.simTarget);
+      const previous = Number.isFinite(field.valueAsNumber)
+        ? Math.trunc(field.valueAsNumber)
+        : 0;
+      field.value = String(
+        Math.min(
+          SIM_SETTINGS.maxClients,
+          Math.max(0, previous + Number(button.dataset.simStep)),
+        ),
+      );
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    }),
+  );
+  portfolioSimulator.querySelectorAll(".sim-result a").forEach((link) =>
+    link.addEventListener("click", (event) => {
+      if (link.getAttribute("aria-disabled") === "true") event.preventDefault();
+      else
+        eventTrack("simulador_carteira_cta", {
+          simulator_profile: activeProfile,
+        });
+    }),
+  );
   setSimulationProfile("licensee", false);
 }
 
@@ -639,7 +772,9 @@ if (portfolioSimulator) {
 const proofSlider = $("proofSlider");
 const proofSlides = [...document.querySelectorAll(".proof-slide")];
 const proofFilterButtons = [...document.querySelectorAll(".proof-filter")];
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
 let activeProofFilter = "Todos";
 let visibleProofSlides = [...proofSlides];
 let proofIndex = 0;
@@ -657,7 +792,8 @@ function updateProof(index, resetProgress = true) {
   $("proofCategory").textContent = active.dataset.category || "Resultado";
   $("proofTitle").textContent = active.dataset.title || "Destaque";
   $("proofLocation").textContent = active.dataset.location || "";
-  $("proofMetric").textContent = active.dataset.metric || "Resultado em destaque";
+  $("proofMetric").textContent =
+    active.dataset.metric || "Resultado em destaque";
   $("proofCurrent").textContent = pad2(proofIndex + 1);
   $("proofTotal").textContent = pad2(visibleProofSlides.length);
   if (resetProgress) {
@@ -672,10 +808,18 @@ function stopProofAutoplay() {
   proofProgressTimer = null;
 }
 function startProofAutoplay() {
-  if (prefersReducedMotion || visibleProofSlides.length < 2 || $("lpContent").hidden) return;
+  if (
+    prefersReducedMotion ||
+    visibleProofSlides.length < 2 ||
+    $("lpContent").hidden
+  )
+    return;
   stopProofAutoplay();
   proofProgress = 0;
-  proofTimer = window.setInterval(() => updateProof(proofIndex + 1), proofIntervalMs);
+  proofTimer = window.setInterval(
+    () => updateProof(proofIndex + 1),
+    proofIntervalMs,
+  );
   proofProgressTimer = window.setInterval(() => {
     proofProgress += 100 / (proofIntervalMs / 100);
     if (proofProgress >= 100) proofProgress = 0;
@@ -683,19 +827,38 @@ function startProofAutoplay() {
   }, 100);
 }
 function rebuildVisibleProofs() {
-  visibleProofSlides = proofSlides.filter((slide) => activeProofFilter === "Todos" || slide.dataset.category === activeProofFilter);
-  proofSlides.forEach((slide) => slide.classList.toggle("is-filtered-out", !visibleProofSlides.includes(slide)));
+  visibleProofSlides = proofSlides.filter(
+    (slide) =>
+      activeProofFilter === "Todos" ||
+      slide.dataset.category === activeProofFilter,
+  );
+  proofSlides.forEach((slide) =>
+    slide.classList.toggle(
+      "is-filtered-out",
+      !visibleProofSlides.includes(slide),
+    ),
+  );
   proofIndex = 0;
   updateProof(0);
   startProofAutoplay();
 }
-proofFilterButtons.forEach((button) => button.addEventListener("click", () => {
-  activeProofFilter = button.dataset.filter || "Todos";
-  proofFilterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
-  rebuildVisibleProofs();
-}));
-$("proofPrev").addEventListener("click", () => { updateProof(proofIndex - 1); startProofAutoplay(); });
-$("proofNext").addEventListener("click", () => { updateProof(proofIndex + 1); startProofAutoplay(); });
+proofFilterButtons.forEach((button) =>
+  button.addEventListener("click", () => {
+    activeProofFilter = button.dataset.filter || "Todos";
+    proofFilterButtons.forEach((item) =>
+      item.classList.toggle("is-active", item === button),
+    );
+    rebuildVisibleProofs();
+  }),
+);
+$("proofPrev").addEventListener("click", () => {
+  updateProof(proofIndex - 1);
+  startProofAutoplay();
+});
+$("proofNext").addEventListener("click", () => {
+  updateProof(proofIndex + 1);
+  startProofAutoplay();
+});
 proofSlider.addEventListener("mouseenter", stopProofAutoplay);
 proofSlider.addEventListener("mouseleave", startProofAutoplay);
 proofSlider.addEventListener("focusin", stopProofAutoplay);
@@ -718,21 +881,39 @@ function closeLightbox() {
   document.body.classList.remove("lightbox-open");
   lastLightboxTrigger?.focus();
 }
-document.querySelectorAll(".proof-image-button").forEach((button) => button.addEventListener("click", () => {
-  const img = button.querySelector("img");
-  if (img) {
-    eventTrack("prova_social_ampliada", { proof_category: button.closest(".proof-slide")?.dataset.category || "" });
-    openLightbox(img, button);
-  }
-}));
-$("proofOpenCase").addEventListener("click", () => visibleProofSlides[proofIndex]?.querySelector(".proof-image-button")?.click());
+document.querySelectorAll(".proof-image-button").forEach((button) =>
+  button.addEventListener("click", () => {
+    const img = button.querySelector("img");
+    if (img) {
+      eventTrack("prova_social_ampliada", {
+        proof_category: button.closest(".proof-slide")?.dataset.category || "",
+      });
+      openLightbox(img, button);
+    }
+  }),
+);
+$("proofOpenCase").addEventListener("click", () =>
+  visibleProofSlides[proofIndex]?.querySelector(".proof-image-button")?.click(),
+);
 $("lightboxClose").addEventListener("click", closeLightbox);
-lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
+lightbox.addEventListener("click", (event) => {
+  if (event.target === lightbox) closeLightbox();
+});
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
-  if (!lightbox.classList.contains("is-open") && document.activeElement?.closest?.("#proofSlider")) {
-    if (event.key === "ArrowRight") { updateProof(proofIndex + 1); startProofAutoplay(); }
-    if (event.key === "ArrowLeft") { updateProof(proofIndex - 1); startProofAutoplay(); }
+  if (event.key === "Escape" && lightbox.classList.contains("is-open"))
+    closeLightbox();
+  if (
+    !lightbox.classList.contains("is-open") &&
+    document.activeElement?.closest?.("#proofSlider")
+  ) {
+    if (event.key === "ArrowRight") {
+      updateProof(proofIndex + 1);
+      startProofAutoplay();
+    }
+    if (event.key === "ArrowLeft") {
+      updateProof(proofIndex - 1);
+      startProofAutoplay();
+    }
   }
 });
 updateProof(0);

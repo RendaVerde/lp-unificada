@@ -290,13 +290,33 @@
                     required
                   >
                     <option value="">Selecione</option>
-                    <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option>
-                    <option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option>
-                    <option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
-                    <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option>
-                    <option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option>
-                    <option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
-                    <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
                   </select></label
                 >
               </div>
@@ -377,11 +397,47 @@
                 role="radiogroup"
                 aria-label="Quanto você consegue investir para empreender?"
               >
-                <label><input type="radio" name="investment" value="Ainda não tenho valor disponível" data-clarity-mask="true" required /><span>Ainda não tenho valor disponível</span></label>
-                <label><input type="radio" name="investment" value="Até R$ 500" data-clarity-mask="true" /><span>Até R$ 500</span></label>
-                <label><input type="radio" name="investment" value="De R$ 501 a R$ 1.000" data-clarity-mask="true" /><span>De R$ 501 a R$ 1.000</span></label>
-                <label><input type="radio" name="investment" value="De R$ 1.001 a R$ 1.500" data-clarity-mask="true" /><span>De R$ 1.001 a R$ 1.500</span></label>
-                <label><input type="radio" name="investment" value="De R$ 1.501 a R$ 2.000" data-clarity-mask="true" /><span>De R$ 1.501 a R$ 2.000</span></label>
+                <label
+                  ><input
+                    type="radio"
+                    name="investment"
+                    value="Ainda não tenho valor disponível"
+                    data-clarity-mask="true"
+                    required
+                  /><span>Ainda não tenho valor disponível</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="investment"
+                    value="Até R$ 500"
+                    data-clarity-mask="true"
+                  /><span>Até R$ 500</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="investment"
+                    value="De R$ 501 a R$ 1.000"
+                    data-clarity-mask="true"
+                  /><span>De R$ 501 a R$ 1.000</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="investment"
+                    value="De R$ 1.001 a R$ 1.500"
+                    data-clarity-mask="true"
+                  /><span>De R$ 1.001 a R$ 1.500</span></label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    name="investment"
+                    value="De R$ 1.501 a R$ 2.000"
+                    data-clarity-mask="true"
+                  /><span>De R$ 1.501 a R$ 2.000</span></label
+                >
               </div>
             </fieldset>
             <fieldset
@@ -800,49 +856,427 @@
         </section>
 
         <!-- 11 · Simulador de carteira recorrente -->
-        <section class="lp-section sim-section dark-band" id="simulador-carteira" aria-labelledby="portfolioSimulatorTitle">
+        <section
+          class="lp-section sim-section dark-band"
+          id="simulador-carteira"
+          aria-labelledby="portfolioSimulatorTitle"
+        >
           <div class="container">
             <div class="lp-section-head sim-head">
-              <div><span class="section-kicker">SIMULADOR DE CARTEIRA</span><h2 id="portfolioSimulatorTitle">Conheça o potencial da <span class="accent">sua carteira.</span></h2></div>
-              <p>Escolha seu perfil e informe quantos clientes ativos imagina ter em cada solução. A estimativa é atualizada na hora.</p>
+              <div>
+                <span class="section-kicker">SIMULADOR DE CARTEIRA</span>
+                <h2 id="portfolioSimulatorTitle">
+                  Conheça o potencial da
+                  <span class="accent">sua carteira.</span>
+                </h2>
+              </div>
+              <p>
+                Escolha seu perfil e informe quantos clientes ativos imagina ter
+                em cada solução. A estimativa é atualizada na hora.
+              </p>
             </div>
             <div class="sim-shell" data-sim-root>
               <fieldset class="sim-profile-selector">
                 <legend>Qual perfil você quer simular?</legend>
-                <div class="sim-profile-options"><button class="sim-profile-button is-active" type="button" data-sim-profile="licensee" aria-pressed="true">Licenciado</button><button class="sim-profile-button" type="button" data-sim-profile="referrer" aria-pressed="false">Cliente que indica</button></div>
+                <div class="sim-profile-options">
+                  <button
+                    class="sim-profile-button is-active"
+                    type="button"
+                    data-sim-profile="licensee"
+                    aria-pressed="true"
+                  >
+                    Licenciado</button
+                  ><button
+                    class="sim-profile-button"
+                    type="button"
+                    data-sim-profile="referrer"
+                    aria-pressed="false"
+                  >
+                    Cliente que indica
+                  </button>
+                </div>
               </fieldset>
               <div class="sim-layout">
                 <div>
                   <div class="sim-services" aria-label="Soluções da simulação">
                     <article class="sim-service">
-                      <div class="sim-service-title"><img src="./img/icons/energy.svg" alt="" width="24" height="24" /><h3>Energia</h3></div><strong class="sim-rate" id="sim-energy-rate">2% a 4%</strong><p class="sim-service-note" id="sim-energy-note">Conforme categoria de bônus e contrato.</p>
-                      <div class="sim-field"><label for="sim-energy-base" id="sim-energy-base-label">Conta mensal (R$)</label><input id="sim-energy-base" data-sim-field="energyBase" type="number" min="0" max="100000" step="0.01" value="500" inputmode="decimal" required aria-describedby="sim-energy-help sim-error" /><p id="sim-energy-help">Base elegível por cliente.</p></div>
-                      <div class="sim-field"><label for="sim-energy-count">Quantidade de clientes</label><div class="sim-stepper"><button type="button" data-sim-step="-1" data-sim-target="sim-energy-count" aria-label="Diminuir clientes de energia">−</button><input id="sim-energy-count" data-sim-field="energyCount" type="number" min="0" max="1000" step="1" value="10" inputmode="numeric" required aria-describedby="sim-error" /><button type="button" data-sim-step="1" data-sim-target="sim-energy-count" aria-label="Aumentar clientes de energia">+</button></div></div>
-                      <div class="sim-field" id="sim-energy-rule-wrap" hidden><label for="sim-energy-rule">Cashback de energia</label><select id="sim-energy-rule" data-sim-field="energyRule"><option value="range">1% a 2%</option><option value="A">2% — regra A</option><option value="B">1% — regra B</option><option value="C">0,5% — rural / C</option></select></div>
+                      <div class="sim-service-title">
+                        <img
+                          src="./img/icons/energy.svg"
+                          alt=""
+                          width="24"
+                          height="24"
+                        />
+                        <h3>Energia</h3>
+                      </div>
+                      <strong class="sim-rate" id="sim-energy-rate"
+                        >2% a 4%</strong
+                      >
+                      <p class="sim-service-note" id="sim-energy-note">
+                        Conforme categoria de bônus e contrato.
+                      </p>
+                      <div class="sim-field">
+                        <label for="sim-energy-base" id="sim-energy-base-label"
+                          >Conta mensal (R$)</label
+                        ><input
+                          id="sim-energy-base"
+                          data-sim-field="energyBase"
+                          type="number"
+                          min="0"
+                          max="100000"
+                          step="0.01"
+                          value="500"
+                          inputmode="decimal"
+                          required
+                          aria-describedby="sim-energy-help sim-error"
+                        />
+                        <p id="sim-energy-help">Base elegível por cliente.</p>
+                      </div>
+                      <div class="sim-field">
+                        <label for="sim-energy-count"
+                          >Quantidade de clientes</label
+                        >
+                        <div class="sim-stepper">
+                          <button
+                            type="button"
+                            data-sim-step="-1"
+                            data-sim-target="sim-energy-count"
+                            aria-label="Diminuir clientes de energia"
+                          >
+                            −</button
+                          ><input
+                            id="sim-energy-count"
+                            data-sim-field="energyCount"
+                            type="number"
+                            min="0"
+                            max="1000"
+                            step="1"
+                            value="10"
+                            inputmode="numeric"
+                            required
+                            aria-describedby="sim-error"
+                          /><button
+                            type="button"
+                            data-sim-step="1"
+                            data-sim-target="sim-energy-count"
+                            aria-label="Aumentar clientes de energia"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <div class="sim-field" id="sim-energy-rule-wrap" hidden>
+                        <label for="sim-energy-rule">Cashback de energia</label
+                        ><select
+                          id="sim-energy-rule"
+                          data-sim-field="energyRule"
+                        >
+                          <option value="range">1% a 2%</option>
+                          <option value="A">2% — regra A</option>
+                          <option value="B">1% — regra B</option>
+                          <option value="C">0,5% — rural / C</option>
+                        </select>
+                      </div>
                     </article>
                     <article class="sim-service">
-                      <div class="sim-service-title"><img src="./img/icons/telecom.svg" alt="" width="24" height="24" /><h3>Telecom</h3></div><strong class="sim-rate" id="sim-telecom-rate">R$ 7,00</strong><p class="sim-service-note" id="sim-telecom-note">Por conexão elegível e paga.</p>
-                      <div class="sim-field" id="sim-telecom-plan-wrap" hidden><label for="sim-telecom-plan">Seu plano mensal (R$)</label><input id="sim-telecom-plan" data-sim-field="telecomPlan" type="number" min="54.90" max="100000" step="0.01" value="54.90" inputmode="decimal" required aria-describedby="sim-telecom-plan-help sim-error" /><p id="sim-telecom-plan-help">A partir de R$ 54,90.</p></div>
-                      <div class="sim-field"><label for="sim-telecom-count">Quantidade de clientes</label><div class="sim-stepper"><button type="button" data-sim-step="-1" data-sim-target="sim-telecom-count" aria-label="Diminuir clientes de telecom">−</button><input id="sim-telecom-count" data-sim-field="telecomCount" type="number" min="0" max="1000" step="1" value="10" inputmode="numeric" required aria-describedby="sim-error" /><button type="button" data-sim-step="1" data-sim-target="sim-telecom-count" aria-label="Aumentar clientes de telecom">+</button></div></div>
+                      <div class="sim-service-title">
+                        <img
+                          src="./img/icons/telecom.svg"
+                          alt=""
+                          width="24"
+                          height="24"
+                        />
+                        <h3>Telecom</h3>
+                      </div>
+                      <strong class="sim-rate" id="sim-telecom-rate"
+                        >R$ 7,00</strong
+                      >
+                      <p class="sim-service-note" id="sim-telecom-note">
+                        Por conexão elegível e paga.
+                      </p>
+                      <div class="sim-field" id="sim-telecom-plan-wrap" hidden>
+                        <label for="sim-telecom-plan"
+                          >Seu plano mensal (R$)</label
+                        ><input
+                          id="sim-telecom-plan"
+                          data-sim-field="telecomPlan"
+                          type="number"
+                          min="54.90"
+                          max="100000"
+                          step="0.01"
+                          value="54.90"
+                          inputmode="decimal"
+                          required
+                          aria-describedby="sim-telecom-plan-help sim-error"
+                        />
+                        <p id="sim-telecom-plan-help">A partir de R$ 54,90.</p>
+                      </div>
+                      <div class="sim-field">
+                        <label for="sim-telecom-count"
+                          >Quantidade de clientes</label
+                        >
+                        <div class="sim-stepper">
+                          <button
+                            type="button"
+                            data-sim-step="-1"
+                            data-sim-target="sim-telecom-count"
+                            aria-label="Diminuir clientes de telecom"
+                          >
+                            −</button
+                          ><input
+                            id="sim-telecom-count"
+                            data-sim-field="telecomCount"
+                            type="number"
+                            min="0"
+                            max="1000"
+                            step="1"
+                            value="10"
+                            inputmode="numeric"
+                            required
+                            aria-describedby="sim-error"
+                          /><button
+                            type="button"
+                            data-sim-step="1"
+                            data-sim-target="sim-telecom-count"
+                            aria-label="Aumentar clientes de telecom"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
                     </article>
                     <article class="sim-service">
-                      <div class="sim-service-title"><img src="./img/icons/insurance.svg" alt="" width="24" height="24" /><h3>Seguros</h3></div><strong class="sim-rate" id="sim-insurance-rate">5%</strong><p class="sim-service-note" id="sim-insurance-note">Referência informada; confirme a regra vigente.</p>
-                      <div class="sim-field"><label for="sim-insurance-base">Seguro mensal (R$)</label><input id="sim-insurance-base" data-sim-field="insuranceBase" type="number" min="0" max="100000" step="0.01" value="300" inputmode="decimal" required aria-describedby="sim-insurance-help sim-error" /><p id="sim-insurance-help">Base elegível por cliente.</p></div>
-                      <div class="sim-field"><label for="sim-insurance-count">Quantidade de clientes</label><div class="sim-stepper"><button type="button" data-sim-step="-1" data-sim-target="sim-insurance-count" aria-label="Diminuir clientes de seguros">−</button><input id="sim-insurance-count" data-sim-field="insuranceCount" type="number" min="0" max="1000" step="1" value="10" inputmode="numeric" required aria-describedby="sim-error" /><button type="button" data-sim-step="1" data-sim-target="sim-insurance-count" aria-label="Aumentar clientes de seguros">+</button></div></div>
+                      <div class="sim-service-title">
+                        <img
+                          src="./img/icons/insurance.svg"
+                          alt=""
+                          width="24"
+                          height="24"
+                        />
+                        <h3>Seguros</h3>
+                      </div>
+                      <strong class="sim-rate" id="sim-insurance-rate"
+                        >5%</strong
+                      >
+                      <p class="sim-service-note" id="sim-insurance-note">
+                        Referência informada; confirme a regra vigente.
+                      </p>
+                      <div class="sim-field">
+                        <label for="sim-insurance-base"
+                          >Seguro mensal (R$)</label
+                        ><input
+                          id="sim-insurance-base"
+                          data-sim-field="insuranceBase"
+                          type="number"
+                          min="0"
+                          max="100000"
+                          step="0.01"
+                          value="300"
+                          inputmode="decimal"
+                          required
+                          aria-describedby="sim-insurance-help sim-error"
+                        />
+                        <p id="sim-insurance-help">
+                          Base elegível por cliente.
+                        </p>
+                      </div>
+                      <div class="sim-field">
+                        <label for="sim-insurance-count"
+                          >Quantidade de clientes</label
+                        >
+                        <div class="sim-stepper">
+                          <button
+                            type="button"
+                            data-sim-step="-1"
+                            data-sim-target="sim-insurance-count"
+                            aria-label="Diminuir clientes de seguros"
+                          >
+                            −</button
+                          ><input
+                            id="sim-insurance-count"
+                            data-sim-field="insuranceCount"
+                            type="number"
+                            min="0"
+                            max="1000"
+                            step="1"
+                            value="10"
+                            inputmode="numeric"
+                            required
+                            aria-describedby="sim-error"
+                          /><button
+                            type="button"
+                            data-sim-step="1"
+                            data-sim-target="sim-insurance-count"
+                            aria-label="Aumentar clientes de seguros"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
                     </article>
                   </div>
                   <p class="sim-error" id="sim-error" role="status" hidden></p>
                 </div>
                 <aside class="sim-result">
-                  <div aria-live="polite" aria-atomic="true"><span class="section-kicker">ESTIMATIVA MENSAL</span><output class="sim-total" id="portfolioEstimate" data-sim-total>R$ 320,00 a R$ 420,00</output><p class="sim-result-note" id="sim-result-note">Estimativa com clientes ativos e pagamentos elegíveis.</p><dl class="sim-breakdown"><div><dt>Energia</dt><dd data-sim-energy>R$ 100,00 a R$ 200,00</dd></div><div><dt>Telecom</dt><dd data-sim-telecom>R$ 70,00</dd></div><div><dt id="sim-insurance-term">Seguros</dt><dd data-sim-insurance>R$ 150,00</dd></div></dl><p class="sim-telecom-goal" data-sim-goal hidden></p></div>
-                  <div class="sim-licensee-actions lp-action-pair" id="sim-licensee-actions"><a class="button button-primary" id="sim-licensee-contact" data-lp-contact target="_blank" rel="noopener noreferrer">FALAR COM A EQUIPE ↗</a><a class="button button-secondary" id="sim-licensee-self" data-lp-self target="_blank" rel="noopener noreferrer">ME LICENCIAR ↗</a></div>
-                  <div class="sim-referrer-actions" id="sim-referrer-actions" hidden><a class="button button-primary" id="sim-referrer-contact" data-lp-contact target="_blank" rel="noopener noreferrer">ANALISAR MINHA SIMULAÇÃO →</a><p class="sim-result-note">Simulação livre. Converse com a equipe quando quiser.</p></div>
+                  <div aria-live="polite" aria-atomic="true">
+                    <span class="section-kicker">ESTIMATIVA MENSAL</span
+                    ><output
+                      class="sim-total"
+                      id="portfolioEstimate"
+                      data-sim-total
+                      >R$ 320,00 a R$ 420,00</output
+                    >
+                    <p class="sim-result-note" id="sim-result-note">
+                      Estimativa com clientes ativos e pagamentos elegíveis.
+                    </p>
+                    <dl class="sim-breakdown">
+                      <div>
+                        <dt>Energia</dt>
+                        <dd data-sim-energy>R$ 100,00 a R$ 200,00</dd>
+                      </div>
+                      <div>
+                        <dt>Telecom</dt>
+                        <dd data-sim-telecom>R$ 70,00</dd>
+                      </div>
+                      <div>
+                        <dt id="sim-insurance-term">Seguros</dt>
+                        <dd data-sim-insurance>R$ 150,00</dd>
+                      </div>
+                    </dl>
+                    <p class="sim-telecom-goal" data-sim-goal hidden></p>
+                  </div>
+                  <div
+                    class="sim-licensee-actions lp-action-pair"
+                    id="sim-licensee-actions"
+                  >
+                    <a
+                      class="button button-primary"
+                      id="sim-licensee-contact"
+                      data-lp-contact
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >FALAR COM A EQUIPE ↗</a
+                    ><a
+                      class="button button-secondary"
+                      id="sim-licensee-self"
+                      data-lp-self
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >ME LICENCIAR ↗</a
+                    >
+                  </div>
+                  <div
+                    class="sim-referrer-actions"
+                    id="sim-referrer-actions"
+                    hidden
+                  >
+                    <a
+                      class="button button-primary"
+                      id="sim-referrer-contact"
+                      data-lp-contact
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >ANALISAR MINHA SIMULAÇÃO →</a
+                    >
+                    <p class="sim-result-note">
+                      Simulação livre. Converse com a equipe quando quiser.
+                    </p>
+                  </div>
                 </aside>
               </div>
-              <p class="sim-disclaimer" id="sim-disclaimer">Cálculo ilustrativo, sem garantia de renda. O resultado depende de clientes ativos, pagamentos, elegibilidade, categoria de bônus e regras contratuais vigentes.</p>
-              <details class="sim-sources"><summary>Como calculamos e quais referências usamos</summary>
-                <div id="sim-licensee-sources"><ul><li><strong>Energia:</strong> clientes ativos × base mensal elegível × faixa de 2% a 4%.</li><li><strong>Telecom:</strong> conexões elegíveis e pagas × R$ 7,00.</li><li><strong>Seguros:</strong> clientes ativos × base mensal elegível × 5%.</li></ul><p>Valores de geração própria usados como referência. Confirme a categoria de bônus e as regras vigentes com o especialista.</p></div>
-                <div id="sim-referrer-sources" hidden><ul><li><strong>Energia:</strong> indicações × base mensal elegível × percentual. A faixa de 1% a 2% contempla os cenários A e B; há opção de 0,5% para C/rural. Confira o <a href="https://www.igreenenergy.com.br/cashback-sustentavel" target="_blank" rel="noopener noreferrer">regulamento iGreen</a> para a sua distribuidora.</li><li><strong>Telecom:</strong> indicações pagas × R$ 3,50, valor fixo do <a href="https://www.igreenenergy.com.br/cashback-telecom" target="_blank" rel="noopener noreferrer">regulamento oficial</a>. São necessárias 16 indicações pagas para gerar R$ 56,00 e cobrir uma mensalidade de R$ 54,90, mantendo seu plano ativo.</li><li><strong>Seguros:</strong> indicações × base mensal elegível × 2,5%. Esse percentual é uma hipótese de simulação que deve ser confirmada com a equipe; não foi validado em regulamento oficial público nesta pesquisa.</li><li><strong>Valores de partida:</strong> R$ 200 em Energia e R$ 200 em Seguros são exemplos editáveis, não médias nacionais nem cotações. A <a href="https://www.epe.gov.br/pt/areas-de-atuacao/energia-eletrica/consumo-de-energia-el%C3%A9trica" target="_blank" rel="noopener noreferrer">EPE</a> publica consumo em kWh e a <a href="https://www.gov.br/aneel/pt-br/assuntos/tarifas/ranking-das-tarifas" target="_blank" rel="noopener noreferrer">ANEEL</a> informa que suas tarifas não incluem todos os componentes da conta. A <a href="https://comercial.bpseguradora.com.br/bp-seguro-auto-v1/" target="_blank" rel="noopener noreferrer">BP anuncia preços a partir de R$ 103,47/mês</a>, o que não equivale a preço médio.</li></ul><p>Referências consultadas em 10/09/2026. Não entram na estimativa bônus pontuais, campanhas temporárias ou o desconto na sua própria energia.</p></div>
+              <p class="sim-disclaimer" id="sim-disclaimer">
+                Cálculo ilustrativo, sem garantia de renda. O resultado depende
+                de clientes ativos, pagamentos, elegibilidade, categoria de
+                bônus e regras contratuais vigentes.
+              </p>
+              <details class="sim-sources">
+                <summary>Como calculamos e quais referências usamos</summary>
+                <div id="sim-licensee-sources">
+                  <ul>
+                    <li>
+                      <strong>Energia:</strong> clientes ativos × base mensal
+                      elegível × faixa de 2% a 4%.
+                    </li>
+                    <li>
+                      <strong>Telecom:</strong> conexões elegíveis e pagas × R$
+                      7,00.
+                    </li>
+                    <li>
+                      <strong>Seguros:</strong> clientes ativos × base mensal
+                      elegível × 5%.
+                    </li>
+                  </ul>
+                  <p>
+                    Valores de geração própria usados como referência. Confirme
+                    a categoria de bônus e as regras vigentes com o
+                    especialista.
+                  </p>
+                </div>
+                <div id="sim-referrer-sources" hidden>
+                  <ul>
+                    <li>
+                      <strong>Energia:</strong> indicações × base mensal
+                      elegível × percentual. A faixa de 1% a 2% contempla os
+                      cenários A e B; há opção de 0,5% para C/rural. Confira o
+                      <a
+                        href="https://www.igreenenergy.com.br/cashback-sustentavel"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >regulamento iGreen</a
+                      >
+                      para a sua distribuidora.
+                    </li>
+                    <li>
+                      <strong>Telecom:</strong> indicações pagas × R$ 3,50,
+                      valor fixo do
+                      <a
+                        href="https://www.igreenenergy.com.br/cashback-telecom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >regulamento oficial</a
+                      >. São necessárias 16 indicações pagas para gerar R$ 56,00
+                      e cobrir uma mensalidade de R$ 54,90, mantendo seu plano
+                      ativo.
+                    </li>
+                    <li>
+                      <strong>Seguros:</strong> indicações × base mensal
+                      elegível × 2,5%. Esse percentual é uma hipótese de
+                      simulação que deve ser confirmada com a equipe; não foi
+                      validado em regulamento oficial público nesta pesquisa.
+                    </li>
+                    <li>
+                      <strong>Valores de partida:</strong> R$ 200 em Energia e
+                      R$ 200 em Seguros são exemplos editáveis, não médias
+                      nacionais nem cotações. A
+                      <a
+                        href="https://www.epe.gov.br/pt/areas-de-atuacao/energia-eletrica/consumo-de-energia-el%C3%A9trica"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >EPE</a
+                      >
+                      publica consumo em kWh e a
+                      <a
+                        href="https://www.gov.br/aneel/pt-br/assuntos/tarifas/ranking-das-tarifas"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >ANEEL</a
+                      >
+                      informa que suas tarifas não incluem todos os componentes
+                      da conta. A
+                      <a
+                        href="https://comercial.bpseguradora.com.br/bp-seguro-auto-v1/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >BP anuncia preços a partir de R$ 103,47/mês</a
+                      >, o que não equivale a preço médio.
+                    </li>
+                  </ul>
+                  <p>
+                    Referências consultadas em 10/09/2026. Não entram na
+                    estimativa bônus pontuais, campanhas temporárias ou o
+                    desconto na sua própria energia.
+                  </p>
+                </div>
               </details>
             </div>
           </div>
