@@ -364,7 +364,7 @@ function whatsappLink(data) {
     `Meu objetivo: ${goals[data.objetivo] || data.objetivo}.`,
     `Experiência com vendas: ${data.experiencia_vendas === "sim" ? "sim" : "ainda não"}.`,
     `Disponibilidade: ${data.disponibilidade.replace(/_/g, " ")}.`,
-    `Pretenção de investimento: R$ ${data.investimento_faixa}.`,
+    `Pretenção de investimento: ${data.investimento_faixa}.`,
     "Gostaria de entender os próximos passos para o licenciamento.",
   ].join("\n");
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
